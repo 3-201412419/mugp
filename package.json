@@ -2,6 +2,7 @@
   "name": "mugp",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://[your-github-username].github.io/mugp",
   "dependencies": {
     "@types/styled-components": "^5.1.34",
     "cra-template-typescript": "1.2.0",
@@ -14,11 +15,14 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
+    "gh-pages": "^6.3.0",
     "vite": "^5.0.11"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   }
 }
