@@ -1,0 +1,51 @@
+{
+  "about": {
+    "title": "Location",
+    "address": {
+      "label": "Address",
+      "text": "21, Mandeok-daero, Buk-gu, Busan, Republic of Korea"
+    },
+    "subway": {
+      "label": "Subway",
+      "text": "5 minutes walk from Mandeok Station, Line 3"
+    },
+    "bus": {
+      "label": "Bus",
+      "text": "Get off at Mandeok Station or Mandeok 2-dong Community Center"
+    },
+    "slogan": "Meet, You, Glow Up - We help you shine",
+    "philosophy": {
+      "title": "Our Philosophy",
+      "text": "We believe in the potential of every artist. We respect their unique talents and individuality, supporting them to showcase their abilities to the world."
+    },
+    "vision": {
+      "title": "Vision",
+      "text": "To become an innovative company leading the global entertainment market, providing a platform for our artists to communicate and grow with fans worldwide."
+    },
+    "organization": {
+      "title": "Organization",
+      "departments": [
+        "Artist Management Team",
+        "Music Production Team",
+        "Performance Planning Team",
+        "Marketing Team",
+        "Global Business Team"
+      ]
+    }
+  },
+  "footer": {
+    "address": "21, Mandeok-daero, Buk-gu, Busan, Republic of Korea",
+    "tel": "+82-51-123-4567",
+    "email": "contact@mugp.co.kr",
+    "company": "Company",
+    "about": "About Us",
+    "news": "News",
+    "audition": "Audition",
+    "artists": "Artists",
+    "artistList": "Artist List",
+    "social": "Social Media",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

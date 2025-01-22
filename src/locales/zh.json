@@ -1,0 +1,51 @@
+{
+  "about": {
+    "title": "位置交通",
+    "address": {
+      "label": "地址",
+      "text": "釜山广域市北区万德大路21"
+    },
+    "subway": {
+      "label": "地铁",
+      "text": "釜山地铁3号线万德站步行5分钟"
+    },
+    "bus": {
+      "label": "公交",
+      "text": "在万德站、万德2洞居民中心站下车"
+    },
+    "slogan": "Meet, You, Glow Up - 助您绽放光芒",
+    "philosophy": {
+      "title": "公司理念",
+      "text": "我们相信每位艺人的潜力。我们尊重他们独特的才能和个性，支持他们在世界舞台上展示自己。"
+    },
+    "vision": {
+      "title": "愿景",
+      "text": "成为引领全球娱乐市场的创新企业，为艺人提供与全球粉丝交流和成长的平台。"
+    },
+    "organization": {
+      "title": "组织架构",
+      "departments": [
+        "艺人管理团队",
+        "音乐制作团队",
+        "演出策划团队",
+        "市场营销团队",
+        "全球业务团队"
+      ]
+    }
+  },
+  "footer": {
+    "address": "釜山广域市北区万德大路21",
+    "tel": "051-123-4567",
+    "email": "contact@mugp.co.kr",
+    "company": "公司",
+    "about": "关于我们",
+    "news": "新闻",
+    "audition": "选秀",
+    "artists": "艺人",
+    "artistList": "艺人名单",
+    "social": "社交媒体",
+    "rights": "版权所有.",
+    "privacy": "隐私政策",
+    "terms": "使用条款"
+  }
+}
