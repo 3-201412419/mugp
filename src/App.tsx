@@ -47,6 +47,7 @@ const AppContent = () => {
 
   const handleLogoClick = () => {
     navigate('/mugp');
+    setCurrentMenu('ABOUT' as MenuType); // 메뉴 선택 상태를 초기화
   };
 
   return (
