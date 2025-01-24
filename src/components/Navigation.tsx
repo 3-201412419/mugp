@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
-
-type Language = 'en' | 'zh' | 'ja' | 'kr';
-type MenuType = 'ABOUT' | 'ARTIST' | 'AUDITION' | 'NEWS';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { TFunction } from 'i18next';
+import type { Language, MenuType } from '../types/common.types';
 
 interface NavigationProps {
   currentLanguage: Language;
-  currentMenu: MenuType;
+  currentMenu: MenuType | null;
   onLanguageChange: (language: Language) => void;
-  setCurrentMenu: (menu: MenuType) => void;
+  onMenuChange: (menu: MenuType) => void;
+  t: TFunction;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
   currentLanguage,
   currentMenu,
   onLanguageChange,
-  setCurrentMenu,
+  onMenuChange,
+  t
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/mugp' || location.pathname === '/mugp/';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -27,7 +29,11 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   const handleMenuClick = (menu: MenuType) => {
-    setCurrentMenu(menu);
+    if (menu === 'ARTIST') {
+      onMenuChange('INFLUENCER');
+    } else {
+      onMenuChange(menu);
+    }
     setIsMenuOpen(false);
   };
 
@@ -36,6 +42,8 @@ const Navigation: React.FC<NavigationProps> = ({
     setIsMenuOpen(false);
   };
 
+  const isArtistPage = location.pathname.includes('/artist');
+
   return (
     <Container>
       <NavContent>
@@ -43,25 +51,47 @@ const Navigation: React.FC<NavigationProps> = ({
           <MenuContainer>
             <MenuItem
               isSelected={!isHome && currentMenu === 'ABOUT'}
-              onClick={() => setCurrentMenu('ABOUT')}
+              onClick={() => handleMenuClick('ABOUT')}
             >
               ABOUT
             </MenuItem>
-            <MenuItem
-              isSelected={!isHome && currentMenu === 'ARTIST'}
-              onClick={() => setCurrentMenu('ARTIST')}
-            >
-              ARTIST
-            </MenuItem>
+            <DropdownContainer isActive={isArtistPage}>
+              <DropdownTrigger 
+                isSelected={currentMenu === 'ARTIST' || isArtistPage}
+                onClick={() => handleMenuClick('ARTIST')}
+              >
+                ARTIST
+              </DropdownTrigger>
+              <DropdownContent>
+                <DropdownItem 
+                  isSelected={currentMenu === 'INFLUENCER'}
+                  onClick={() => handleMenuClick('INFLUENCER')}
+                >
+                  INFLUENCER
+                </DropdownItem>
+                <DropdownItem 
+                  isSelected={currentMenu === 'MC'}
+                  onClick={() => handleMenuClick('MC')}
+                >
+                  MC(ANNOUNCER)
+                </DropdownItem>
+                <DropdownItem 
+                  isSelected={currentMenu === 'CREATOR'}
+                  onClick={() => handleMenuClick('CREATOR')}
+                >
+                  CREATOR
+                </DropdownItem>
+              </DropdownContent>
+            </DropdownContainer>
             <MenuItem
               isSelected={!isHome && currentMenu === 'AUDITION'}
-              onClick={() => setCurrentMenu('AUDITION')}
+              onClick={() => handleMenuClick('AUDITION')}
             >
               AUDITION
             </MenuItem>
             <MenuItem
               isSelected={!isHome && currentMenu === 'NEWS'}
-              onClick={() => setCurrentMenu('NEWS')}
+              onClick={() => handleMenuClick('NEWS')}
             >
               NEWS
             </MenuItem>
@@ -69,25 +99,25 @@ const Navigation: React.FC<NavigationProps> = ({
           <LanguageContainer>
             <LanguageButton
               isSelected={currentLanguage === 'kr'}
-              onClick={() => onLanguageChange('kr')}
+              onClick={() => handleLanguageClick('kr')}
             >
               KR
             </LanguageButton>
             <LanguageButton
               isSelected={currentLanguage === 'en'}
-              onClick={() => onLanguageChange('en')}
+              onClick={() => handleLanguageClick('en')}
             >
               EN
             </LanguageButton>
             <LanguageButton
               isSelected={currentLanguage === 'ja'}
-              onClick={() => onLanguageChange('ja')}
+              onClick={() => handleLanguageClick('ja')}
             >
               JP
             </LanguageButton>
             <LanguageButton
               isSelected={currentLanguage === 'zh'}
-              onClick={() => onLanguageChange('zh')}
+              onClick={() => handleLanguageClick('zh')}
             >
               CN
             </LanguageButton>
@@ -111,12 +141,34 @@ const Navigation: React.FC<NavigationProps> = ({
               >
                 ABOUT
               </MobileMenuItem>
-              <MobileMenuItem
-                isSelected={!isHome && currentMenu === 'ARTIST'}
-                onClick={() => handleMenuClick('ARTIST')}
-              >
-                ARTIST
-              </MobileMenuItem>
+              <MobileMenuItemWithDropdown>
+                <MobileDropdownTrigger 
+                  isSelected={currentMenu === 'ARTIST' || isArtistPage}
+                  onClick={() => handleMenuClick('ARTIST')}
+                >
+                  ARTIST
+                </MobileDropdownTrigger>
+                <MobileDropdownContent>
+                  <MobileDropdownItem 
+                    isSelected={currentMenu === 'INFLUENCER'}
+                    onClick={() => handleMenuClick('INFLUENCER')}
+                  >
+                    INFLUENCER
+                  </MobileDropdownItem>
+                  <MobileDropdownItem 
+                    isSelected={currentMenu === 'MC'}
+                    onClick={() => handleMenuClick('MC')}
+                  >
+                    MC(ANNOUNCER)
+                  </MobileDropdownItem>
+                  <MobileDropdownItem 
+                    isSelected={currentMenu === 'CREATOR'}
+                    onClick={() => handleMenuClick('CREATOR')}
+                  >
+                    CREATOR
+                  </MobileDropdownItem>
+                </MobileDropdownContent>
+              </MobileMenuItemWithDropdown>
               <MobileMenuItem
                 isSelected={!isHome && currentMenu === 'AUDITION'}
                 onClick={() => handleMenuClick('AUDITION')}
@@ -168,29 +220,146 @@ const Container = styled.nav`
   width: 100%;
   padding: 20px 40px;
   background-color: transparent;
+  border-bottom: 1px solid #eaeaea;
   position: relative;
   z-index: 1000;
 
   @media (max-width: 768px) {
     padding: 15px 20px;
-    height: 60px;
   }
 `;
 
 const NavContent = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const DesktopMenu = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 
   @media (max-width: 768px) {
     display: none;
   }
+`;
+
+const MenuContainer = styled.div`
+  display: flex;
+  gap: 40px;
+  align-items: center;
+`;
+
+const MenuItem = styled.button<{ isSelected: boolean }>`
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+const DropdownContent = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 5px;
+  padding: 8px 0;
+  display: none;
+`;
+
+const DropdownContainer = styled.div<{ isActive: boolean }>`
+  position: relative;
+  display: inline-block;
+
+  &:hover ${DropdownContent} {
+    display: block;
+  }
+`;
+
+const DropdownTrigger = styled.button<{ isSelected: boolean }>`
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
+  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    color: #000;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+  }
+`;
+
+const DropdownItem = styled.button<{ isSelected: boolean }>`
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  border: none;
+  background: none;
+  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
+  font-size: 1rem;
+  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #000;
+  }
+`;
+
+const MobileDropdownContent = styled.div`
+  display: none;
+  width: 100%;
+  background-color: #f9f9f9;
+  padding: 8px 0;
+`;
+
+const MobileMenuItemWithDropdown = styled.div`
+  width: 100%;
+
+  &:hover ${MobileDropdownContent} {
+    display: block;
+  }
+`;
+
+const MobileDropdownTrigger = styled(DropdownTrigger)<{ isSelected: boolean }>`
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 15px;
+`;
+
+const MobileDropdownItem = styled(DropdownItem)`
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 12px;
 `;
 
 const MobileMenu = styled.div`
@@ -201,36 +370,16 @@ const MobileMenu = styled.div`
   }
 `;
 
-const MenuContainer = styled.div`
-  display: flex;
-  gap: 40px;
-`;
-
-const MenuItem = styled.button<{ isSelected: boolean }>`
-  background: none;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 5px 10px;
-  color: ${({ isSelected }) => (isSelected ? '#000000' : '#666666')};
-  font-weight: ${({ isSelected }) => (isSelected ? '700' : '400')};
-  transition: all 0.3s ease;
-
-  &:hover {
-    color: #000000;
-  }
-`;
-
 const MobileMenuItem = styled(MenuItem)`
   font-size: 1.2rem;
   padding: 15px;
-  width: 200px;
+  width: 100%;
   text-align: center;
 `;
 
 const LanguageContainer = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const MobileLanguageContainer = styled(LanguageContainer)`
@@ -242,14 +391,14 @@ const LanguageButton = styled.button<{ isSelected: boolean }>`
   background: none;
   border: none;
   font-size: 0.9rem;
+  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
   cursor: pointer;
-  padding: 5px;
-  color: ${({ isSelected }) => (isSelected ? '#000000' : '#666666')};
-  font-weight: ${({ isSelected }) => (isSelected ? '700' : '400')};
+  padding: 4px 8px;
   transition: all 0.3s ease;
 
   &:hover {
-    color: #000000;
+    color: #000;
   }
 `;
 
@@ -322,7 +471,8 @@ const MobileMenuItems = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  width: 100%;
+  padding: 20px;
 `;
 
 export default Navigation;

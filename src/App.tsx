@@ -13,14 +13,15 @@ import Artist from './pages/Artist';
 import Audition from './pages/Audition';
 import News from './pages/News';
 
-type Language = 'en' | 'zh' | 'ja' | 'kr';
-type MenuType = 'ABOUT' | 'ARTIST' | 'AUDITION' | 'NEWS';
+import type { Language, MenuType } from './types/common.types';
+
+const DEFAULT_MENU: MenuType = 'ABOUT';
 
 const AppContent = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [currentLanguage, setCurrentLanguage] = useState<Language>('kr');
-  const [currentMenu, setCurrentMenu] = useState<MenuType>('ABOUT');
+  const [currentMenu, setCurrentMenu] = useState<MenuType | null>(DEFAULT_MENU);
 
   const handleLanguageChange = (language: Language) => {
     setCurrentLanguage(language);
@@ -34,7 +35,14 @@ const AppContent = () => {
         navigate('/mugp/about');
         break;
       case 'ARTIST':
-        navigate('/mugp/artist');
+      case 'INFLUENCER':
+        navigate('/mugp/artist/influencer');
+        break;
+      case 'MC':
+        navigate('/mugp/artist/mc');
+        break;
+      case 'CREATOR':
+        navigate('/mugp/artist/creator');
         break;
       case 'AUDITION':
         navigate('/mugp/audition');
@@ -46,28 +54,30 @@ const AppContent = () => {
   };
 
   const handleLogoClick = () => {
+    setCurrentMenu(null);
     navigate('/mugp');
-    setCurrentMenu('ABOUT' as MenuType); // 메뉴 선택 상태를 초기화
   };
 
   return (
     <Container>
       <Header onLogoClick={handleLogoClick} />
-      <Navigation
+      <Navigation 
+        currentMenu={currentMenu} 
+        onMenuChange={handleMenuChange}
         currentLanguage={currentLanguage}
-        currentMenu={currentMenu}
         onLanguageChange={handleLanguageChange}
-        setCurrentMenu={handleMenuChange}
+        t={t}
       />
-      <Main>
+      <MainContent>
         <Routes>
           <Route path="/mugp" element={<Home />} />
           <Route path="/mugp/about" element={<About />} />
-          <Route path="/mugp/artist" element={<Artist />} />
+          <Route path="/mugp/artist/:category" element={<Artist />} />
           <Route path="/mugp/audition" element={<Audition />} />
           <Route path="/mugp/news" element={<News />} />
+          <Route path="/" element={<Home />} />
         </Routes>
-      </Main>
+      </MainContent>
       <Footer />
     </Container>
   );
@@ -87,7 +97,7 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const Main = styled.main`
+const MainContent = styled.main`
   flex: 1;
 `;
 
