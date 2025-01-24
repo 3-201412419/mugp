@@ -12,6 +12,8 @@ import About from './pages/About';
 import Artist from './pages/Artist';
 import Audition from './pages/Audition';
 import News from './pages/News';
+import Calendar from './pages/Calendar';
+import Apply from './pages/Apply';
 
 import type { Language, MenuType } from './types/common.types';
 
@@ -44,11 +46,11 @@ const AppContent = () => {
       case 'CREATOR':
         navigate('/mugp/artist/creator');
         break;
-      case 'AUDITION':
-        navigate('/mugp/audition');
+      case 'CALENDAR':
+        navigate('/mugp/calendar');
         break;
-      case 'NEWS':
-        navigate('/mugp/news');
+      case 'APPLY':
+        navigate('/mugp/apply');
         break;
     }
   };
@@ -73,8 +75,8 @@ const AppContent = () => {
           <Route path="/mugp" element={<Home />} />
           <Route path="/mugp/about" element={<About />} />
           <Route path="/mugp/artist/:category" element={<Artist />} />
-          <Route path="/mugp/audition" element={<Audition />} />
-          <Route path="/mugp/news" element={<News />} />
+          <Route path="/mugp/calendar" element={<Calendar />} />
+          <Route path="/mugp/apply" element={<Apply />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </MainContent>

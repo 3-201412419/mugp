@@ -84,16 +84,16 @@ const Navigation: React.FC<NavigationProps> = ({
               </DropdownContent>
             </DropdownContainer>
             <MenuItem
-              isSelected={!isHome && currentMenu === 'AUDITION'}
-              onClick={() => handleMenuClick('AUDITION')}
+              isSelected={!isHome && currentMenu === 'CALENDAR'}
+              onClick={() => handleMenuClick('CALENDAR')}
             >
-              AUDITION
+              CALENDAR
             </MenuItem>
             <MenuItem
-              isSelected={!isHome && currentMenu === 'NEWS'}
-              onClick={() => handleMenuClick('NEWS')}
+              isSelected={!isHome && currentMenu === 'APPLY'}
+              onClick={() => handleMenuClick('APPLY')}
             >
-              NEWS
+              APPLY
             </MenuItem>
           </MenuContainer>
           <LanguageContainer>
@@ -170,16 +170,16 @@ const Navigation: React.FC<NavigationProps> = ({
                 </MobileDropdownContent>
               </MobileMenuItemWithDropdown>
               <MobileMenuItem
-                isSelected={!isHome && currentMenu === 'AUDITION'}
-                onClick={() => handleMenuClick('AUDITION')}
+                isSelected={!isHome && currentMenu === 'CALENDAR'}
+                onClick={() => handleMenuClick('CALENDAR')}
               >
-                AUDITION
+                CALENDAR
               </MobileMenuItem>
               <MobileMenuItem
-                isSelected={!isHome && currentMenu === 'NEWS'}
-                onClick={() => handleMenuClick('NEWS')}
+                isSelected={!isHome && currentMenu === 'APPLY'}
+                onClick={() => handleMenuClick('APPLY')}
               >
-                NEWS
+                APPLY
               </MobileMenuItem>
             </MobileMenuItems>
 
@@ -255,14 +255,40 @@ const MenuContainer = styled.div`
 `;
 
 const MenuItem = styled.button<{ isSelected: boolean }>`
-  background: none;
-  border: none;
   font-size: 1.1rem;
-  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
-  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
+  font-weight: 400;
+  color: ${props => props.isSelected ? '#000' : '#666'};
   cursor: pointer;
   padding: 8px 16px;
   transition: all 0.3s ease;
+  background: none;
+  border: none;
+  outline: none;
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+const DropdownContainer = styled.div<{ isActive: boolean }>`
+  position: relative;
+  display: inline-block;
+
+  &:hover > div {
+    display: block;
+  }
+`;
+
+const DropdownTrigger = styled.button<{ isSelected: boolean }>`
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: ${props => props.isSelected ? '#000' : '#666'};
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  outline: none;
 
   &:hover {
     color: #000;
@@ -273,93 +299,28 @@ const DropdownContent = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #fff;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
-  z-index: 1;
-  margin-top: 5px;
-  padding: 8px 0;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: none;
-`;
-
-const DropdownContainer = styled.div<{ isActive: boolean }>`
-  position: relative;
-  display: inline-block;
-
-  &:hover ${DropdownContent} {
-    display: block;
-  }
-`;
-
-const DropdownTrigger = styled.button<{ isSelected: boolean }>`
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
-  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
-  cursor: pointer;
-  padding: 8px 16px;
-  transition: all 0.3s ease;
-  position: relative;
-
-  &:hover {
-    color: #000;
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 10px;
-  }
+  z-index: 1;
 `;
 
 const DropdownItem = styled.button<{ isSelected: boolean }>`
   width: 100%;
   padding: 10px 16px;
   text-align: left;
-  border: none;
-  background: none;
-  color: ${({ isSelected }) => (isSelected ? '#000' : '#666')};
   font-size: 1rem;
-  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  color: ${props => props.isSelected ? '#000' : '#666'};
+  background: none;
+  border: none;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #f5f5f5;
     color: #000;
+    background-color: #f5f5f5;
   }
-`;
-
-const MobileDropdownContent = styled.div`
-  display: none;
-  width: 100%;
-  background-color: #f9f9f9;
-  padding: 8px 0;
-`;
-
-const MobileMenuItemWithDropdown = styled.div`
-  width: 100%;
-
-  &:hover ${MobileDropdownContent} {
-    display: block;
-  }
-`;
-
-const MobileDropdownTrigger = styled(DropdownTrigger)<{ isSelected: boolean }>`
-  width: 100%;
-  text-align: center;
-  font-size: 1.2rem;
-  padding: 15px;
-`;
-
-const MobileDropdownItem = styled(DropdownItem)`
-  text-align: center;
-  font-size: 1.1rem;
-  padding: 12px;
 `;
 
 const MobileMenu = styled.div`
@@ -370,7 +331,31 @@ const MobileMenu = styled.div`
   }
 `;
 
-const MobileMenuItem = styled(MenuItem)`
+const MobileMenuItemWithDropdown = styled.div`
+  width: 100%;
+`;
+
+const MobileDropdownTrigger = styled.button<{ isSelected: boolean }>`
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 15px;
+`;
+
+const MobileDropdownContent = styled.div`
+  display: none;
+  width: 100%;
+  background-color: #f9f9f9;
+  padding: 8px 0;
+`;
+
+const MobileDropdownItem = styled.button<{ isSelected: boolean }>`
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 12px;
+`;
+
+const MobileMenuItem = styled.button<{ isSelected: boolean }>`
   font-size: 1.2rem;
   padding: 15px;
   width: 100%;
