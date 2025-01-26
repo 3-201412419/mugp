@@ -25,6 +25,9 @@ const ApplySchema = new mongoose.Schema({
   portfolioUrl: {
     type: String,
   },
+  notionPageId: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { connectDB } from './config/db';
 import applyRoutes from './routes/apply';
+import artistRoutes from './routes/artists';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Routes
 app.use('/api/apply', applyRoutes);
+app.use('/api/artists', artistRoutes);
 
 const PORT = process.env.PORT || 5000;
 

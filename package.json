@@ -45,6 +45,7 @@
     "preview": "vite preview",
     "server": "ts-node -P tsconfig.server.json src/server/index.ts",
     "server:dev": "ts-node-dev --project tsconfig.server.json --respawn src/server/index.ts",
-    "dev": "concurrently \"npm run server:dev\" \"npm run start\""
+    "dev": "concurrently \"npm run server:dev\" \"npm run start\"",
+    "migrate:notion": "ts-node -P tsconfig.server.json src/server/scripts/migrateToNotion.ts"
   }
 }
