@@ -33,6 +33,37 @@
       ]
     }
   },
+  "apply": {
+    "title": "応募",
+    "name": "名前",
+    "email": "メールアドレス",
+    "phone": "電話番号",
+    "category": "応募分野",
+    "categories": {
+      "influencer": "インフルエンサー",
+      "artist": "アーティスト",
+      "actor": "俳優"
+    },
+    "message": "自己紹介",
+    "portfolio": "ポートフォリオ",
+    "portfolioDescription": "PDF、DOC、DOCXファイルのみアップロード可能です。(最大10MB)",
+    "submit": "応募する",
+    "placeholders": {
+      "name": "お名前を入力してください",
+      "email": "メールアドレスを入力してください",
+      "phone": "電話番号を入力してください",
+      "message": "自己紹介を記入してください"
+    },
+    "guides": {
+      "phone": "'-'なしで数字のみ入力してください",
+      "message": "経歴、特技、志望動機などを自由に記入してください"
+    },
+    "uploadFile": "ファイルを選択",
+    "errors": {
+      "fileSize": "ファイルサイズは10MBを超えることはできません。"
+    },
+    "success": "応募が完了しました。"
+  },
   "footer": {
     "address": "釜山広域市北区万徳大路21",
     "tel": "051-123-4567",

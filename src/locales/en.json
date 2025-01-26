@@ -33,6 +33,37 @@
       ]
     }
   },
+  "apply": {
+    "title": "Apply",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "category": "Category",
+    "categories": {
+      "influencer": "Influencer",
+      "artist": "Artist",
+      "actor": "Actor"
+    },
+    "message": "Introduction",
+    "portfolio": "Portfolio",
+    "portfolioDescription": "Only PDF, DOC, DOCX files are allowed. (Max 10MB)",
+    "submit": "Submit Application",
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email address",
+      "phone": "Enter your phone number",
+      "message": "Write your introduction"
+    },
+    "guides": {
+      "phone": "Enter numbers only, without '-'",
+      "message": "Please write about your experience, skills, and motivation"
+    },
+    "uploadFile": "Choose File",
+    "errors": {
+      "fileSize": "File size cannot exceed 10MB."
+    },
+    "success": "Your application has been submitted successfully."
+  },
   "footer": {
     "address": "21, Mandeok-daero, Buk-gu, Busan, Republic of Korea",
     "tel": "+82-51-123-4567",

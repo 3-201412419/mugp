@@ -1,22 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src/server.ts",
-    "src/models/**/*",
-    "src/api/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/server/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -33,6 +33,37 @@
       ]
     }
   },
+  "apply": {
+    "title": "申请",
+    "name": "姓名",
+    "email": "电子邮箱",
+    "phone": "联系电话",
+    "category": "申请领域",
+    "categories": {
+      "influencer": "网红",
+      "artist": "艺术家",
+      "actor": "演员"
+    },
+    "message": "自我介绍",
+    "portfolio": "作品集",
+    "portfolioDescription": "仅支持上传PDF、DOC、DOCX文件。(最大10MB)",
+    "submit": "提交申请",
+    "placeholders": {
+      "name": "请输入姓名",
+      "email": "请输入电子邮箱",
+      "phone": "请输入联系电话",
+      "message": "请填写自我介绍"
+    },
+    "guides": {
+      "phone": "请只输入数字，无需'-'",
+      "message": "请自由填写您的经历、特长和申请动机等"
+    },
+    "uploadFile": "选择文件",
+    "errors": {
+      "fileSize": "文件大小不能超过10MB。"
+    },
+    "success": "申请已成功提交。"
+  },
   "footer": {
     "address": "釜山广域市北区万德大路21",
     "tel": "051-123-4567",

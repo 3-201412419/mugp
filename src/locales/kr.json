@@ -33,6 +33,37 @@
       ]
     }
   },
+  "apply": {
+    "title": "지원하기",
+    "name": "이름",
+    "email": "이메일",
+    "phone": "연락처",
+    "category": "지원 분야",
+    "categories": {
+      "influencer": "인플루언서",
+      "artist": "아티스트",
+      "actor": "배우"
+    },
+    "message": "자기소개",
+    "portfolio": "포트폴리오",
+    "portfolioDescription": "PDF, DOC, DOCX 파일만 업로드 가능합니다. (최대 10MB)",
+    "submit": "지원하기",
+    "placeholders": {
+      "name": "이름을 입력해주세요",
+      "email": "이메일 주소를 입력해주세요",
+      "phone": "연락 가능한 전화번호를 입력해주세요",
+      "message": "자기소개를 작성해주세요"
+    },
+    "guides": {
+      "phone": "'-' 없이 숫자만 입력해주세요",
+      "message": "본인의 경력, 특기, 지원 동기 등을 자유롭게 작성해주세요"
+    },
+    "uploadFile": "파일 선택",
+    "errors": {
+      "fileSize": "파일 크기는 10MB를 초과할 수 없습니다."
+    },
+    "success": "지원서가 성공적으로 제출되었습니다."
+  },
   "footer": {
     "address": "부산광역시 북구 만덕대로 21",
     "tel": "051-123-4567",
