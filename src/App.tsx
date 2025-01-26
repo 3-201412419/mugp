@@ -28,6 +28,7 @@ const AppContent = () => {
   const handleLanguageChange = (language: Language) => {
     setCurrentLanguage(language);
     i18n.changeLanguage(language);
+    document.documentElement.lang = language;
   };
 
   const handleMenuChange = (menu: MenuType) => {
