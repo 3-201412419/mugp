@@ -58,7 +58,7 @@ const AppContent = () => {
 
   const handleLogoClick = () => {
     setCurrentMenu(null);
-    navigate('/mugp');
+    navigate('/mugp/');
   };
 
   return (

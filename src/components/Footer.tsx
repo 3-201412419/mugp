@@ -11,36 +11,40 @@ const Footer = () => {
           <Logo>MUGP Entertainment</Logo>
           <Address>{t('footer.address')}</Address>
           <Contact>
-            <ContactItem>Tel: {t('footer.tel')}</ContactItem>
-            <ContactItem>Email: {t('footer.email')}</ContactItem>
+            <ContactItem>Tel: 070-8095-2423</ContactItem>
+            <ContactItem>Email: biz@mugp.kr</ContactItem>
           </Contact>
         </CompanyInfo>
         
         <FooterLinks>
           <LinkColumn>
-            <LinkTitle>{t('footer.company')}</LinkTitle>
-            <LinkItem href="/about">{t('footer.about')}</LinkItem>
-            <LinkItem href="/news">{t('footer.news')}</LinkItem>
-            <LinkItem href="/audition">{t('footer.audition')}</LinkItem>
+            <LinkTitle>ABOUT</LinkTitle>
+            <LinkItem href="/mugp/about">회사소개</LinkItem>
           </LinkColumn>
           
           <LinkColumn>
-            <LinkTitle>{t('footer.artists')}</LinkTitle>
-            <LinkItem href="/artist">{t('footer.artistList')}</LinkItem>
+            <LinkTitle>ARTIST</LinkTitle>
+            <LinkItem href="/mugp/artist/influencer">INFLUENCER</LinkItem>
+            <LinkItem href="/mugp/artist/mc">MC(ANNOUNCER)</LinkItem>
+            <LinkItem href="/mugp/artist/creator">CREATOR</LinkItem>
+          </LinkColumn>
+
+          <LinkColumn>
+            <LinkTitle>OTHER</LinkTitle>
+            <LinkItem href="/mugp/calendar">CALENDAR</LinkItem>
+            <LinkItem href="/mugp/apply">APPLY</LinkItem>
           </LinkColumn>
           
           <LinkColumn>
-            <LinkTitle>{t('footer.social')}</LinkTitle>
-            <LinkItem href="https://www.instagram.com/" target="_blank">Instagram</LinkItem>
-            <LinkItem href="https://www.youtube.com/" target="_blank">YouTube</LinkItem>
-            <LinkItem href="https://twitter.com/" target="_blank">Twitter</LinkItem>
+            <LinkTitle>SOCIAL</LinkTitle>
+            <LinkItem href="https://www.instagram.com/mugp_ofcl/" target="_blank">Instagram</LinkItem>
           </LinkColumn>
         </FooterLinks>
       </FooterContent>
       
       <Copyright>
         <CopyrightText>
-          © {new Date().getFullYear()} MUGP Entertainment. {t('footer.rights')}
+          {new Date().getFullYear()} MUGP Entertainment. {t('footer.rights')}
         </CopyrightText>
         <PrivacyLinks>
           <PrivacyLink href="/privacy">{t('footer.privacy')}</PrivacyLink>
