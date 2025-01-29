@@ -11,12 +11,7 @@ const sequelize = new Sequelize({
   username: process.env.MYSQL_USER || 'root',
   password: process.env.MYSQL_PASSWORD || 'zxasqw1!',
   database: process.env.MYSQL_DATABASE || 'mugp',
-  logging: console.log, 
-  define: {
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
-    timestamps: true
-  }
+  logging: false,
 });
 
 export const initDatabase = async () => {
@@ -24,8 +19,8 @@ export const initDatabase = async () => {
     await sequelize.authenticate();
     console.log('MySQL Database connected successfully');
     
-    // force: true로 변경하여 테이블을 강제로 재생성
-    await sequelize.sync({ force: true });
+    // 테이블 자동 생성
+    await sequelize.sync({ alter: true });
     console.log('Database synchronized - Tables created');
   } catch (error) {
     console.error('Unable to connect to the database:', error);

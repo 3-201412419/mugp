@@ -1,25 +1,32 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
+import { initDatabase } from './server/config/db';
 import artistsRouter from './routes/artistRoutes';
+import applyRouter from './server/routes/apply';
 
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || '')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('MongoDB connection error:', error));
+// Initialize database connection
+initDatabase()
+  .then(() => {
+    // Routes
+    app.use('/api/artists', artistsRouter);
+    app.use('/api/apply', applyRouter);
 
-// Routes
-app.use('/api/artists', artistsRouter);
-
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    // Start server
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  });

@@ -1,38 +1,42 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const artistSchema = new mongoose.Schema({
+const Artist = sequelize.define('Artist', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   name: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   category: {
-    type: String,
-    required: true,
-    enum: ['influencer', 'mc', 'creator'],
+    type: DataTypes.ENUM('influencer', 'mc', 'creator'),
+    allowNull: false,
   },
   image: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   description: {
-    type: String,
-    default: '',
+    type: DataTypes.TEXT,
+    defaultValue: '',
   },
   socialLinks: {
-    instagram: String,
-    youtube: String,
-    blog: String,
+    type: DataTypes.JSON,
+    defaultValue: {},
   },
   order: {
-    type: Number,
-    default: 0,
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   isActive: {
-    type: Boolean,
-    default: true,
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
 }, {
   timestamps: true,
 });
 
-module.exports = mongoose.model('Artist', artistSchema);
+module.exports = Artist;

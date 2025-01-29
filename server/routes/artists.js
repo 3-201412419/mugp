@@ -6,8 +6,11 @@ const Artist = require('../models/Artist');
 router.get('/', async (req, res) => {
   try {
     const { category } = req.query;
-    const query = category ? { category, isActive: true } : { isActive: true };
-    const artists = await Artist.find(query).sort('order');
+    const where = category ? { category, isActive: true } : { isActive: true };
+    const artists = await Artist.findAll({
+      where,
+      order: [['order', 'ASC']]
+    });
     res.json(artists);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -16,17 +19,15 @@ router.get('/', async (req, res) => {
 
 // Create new artist
 router.post('/', async (req, res) => {
-  const artist = new Artist({
-    name: req.body.name,
-    category: req.body.category,
-    image: req.body.image,
-    description: req.body.description,
-    socialLinks: req.body.socialLinks,
-    order: req.body.order,
-  });
-
   try {
-    const newArtist = await artist.save();
+    const newArtist = await Artist.create({
+      name: req.body.name,
+      category: req.body.category,
+      image: req.body.image,
+      description: req.body.description,
+      socialLinks: req.body.socialLinks,
+      order: req.body.order,
+    });
     res.status(201).json(newArtist);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -36,18 +37,13 @@ router.post('/', async (req, res) => {
 // Update artist
 router.patch('/:id', async (req, res) => {
   try {
-    const artist = await Artist.findById(req.params.id);
+    const artist = await Artist.findByPk(req.params.id);
     if (!artist) {
       return res.status(404).json({ message: 'Artist not found' });
     }
 
-    Object.keys(req.body).forEach(key => {
-      if (req.body[key] != null) {
-        artist[key] = req.body[key];
-      }
-    });
-
-    const updatedArtist = await artist.save();
+    await artist.update(req.body);
+    const updatedArtist = await artist.reload();
     res.json(updatedArtist);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -57,13 +53,12 @@ router.patch('/:id', async (req, res) => {
 // Delete artist (soft delete)
 router.delete('/:id', async (req, res) => {
   try {
-    const artist = await Artist.findById(req.params.id);
+    const artist = await Artist.findByPk(req.params.id);
     if (!artist) {
       return res.status(404).json({ message: 'Artist not found' });
     }
 
-    artist.isActive = false;
-    await artist.save();
+    await artist.update({ isActive: false });
     res.json({ message: 'Artist has been deactivated' });
   } catch (error) {
     res.status(500).json({ message: error.message });

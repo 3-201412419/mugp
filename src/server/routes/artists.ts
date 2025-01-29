@@ -1,5 +1,7 @@
 import express from 'express';
 import Artist from '../models/Artist';
+import { WhereOptions } from 'sequelize';
+import { ArtistAttributes } from '../models/Artist';
 
 const router = express.Router();
 
@@ -7,13 +9,21 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { category } = req.query;
-    const query = category ? { category } : {};
-    
-    const artists = await Artist.find(query).sort('order');
+    const where: WhereOptions<ArtistAttributes> = {
+      isActive: true,
+      ...(category ? { category: category as string } : {})
+    };
+
+    const artists = await Artist.findAll({
+      where,
+      order: [
+        ['order', 'ASC']
+      ]
+    });
     res.json(artists);
   } catch (error) {
     console.error('Error fetching artists:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

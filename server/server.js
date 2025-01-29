@@ -1,8 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const sequelize = require('./config/database');
 const artistsRouter = require('./routes/artists');
 const calendarRoutes = require('./routes/calendarRoutes');
 
@@ -15,10 +15,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch((error) => console.error('MongoDB connection error:', error));
+// Database connection and sync
+async function initDatabase() {
+  try {
+    await sequelize.authenticate();
+    console.log('MySQL connection has been established successfully.');
+    
+    // Sync all models with database
+    await sequelize.sync();
+    console.log('All models were synchronized successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+initDatabase();
 
 // Routes
 app.use('/api/artists', artistsRouter);

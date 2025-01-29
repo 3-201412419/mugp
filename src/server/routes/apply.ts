@@ -16,17 +16,15 @@ router.post('/', upload.single('portfolio'), async (req, res) => {
     const { name, email, phone, category, message } = req.body;
     const portfolioUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
 
-    // MongoDB에 데이터 저장
-    const applyData = {
+    // MySQL에 데이터 저장
+    const apply = await Apply.create({
       name,
       email,
       phone,
       category,
       message,
       portfolioUrl,
-    };
-    const apply = new Apply(applyData);
-    await apply.save();
+    });
 
     // Notion에 데이터 추가
     const notionResponse = await notion.pages.create({
@@ -71,11 +69,11 @@ router.post('/', upload.single('portfolio'), async (req, res) => {
             name: '시작 전',
           },
         },
-        'MongoDB ID': {
+        'MySQL ID': {
           rich_text: [
             {
               text: {
-                content: apply._id.toString(),
+                content: apply.id.toString(),
               },
             },
           ],
@@ -83,9 +81,10 @@ router.post('/', upload.single('portfolio'), async (req, res) => {
       },
     });
 
-    // MongoDB 문서에 Notion 페이지 ID 추가
-    apply.notionPageId = notionResponse.id;
-    await apply.save();
+    // MySQL 레코드에 Notion 페이지 ID 추가
+    await apply.update({
+      notionPageId: notionResponse.id,
+    });
 
     res.status(201).json({ 
       success: true, 
@@ -103,43 +102,38 @@ router.post('/', upload.single('portfolio'), async (req, res) => {
 // 지원자 목록 조회
 router.get('/list', async (_req, res) => {
   try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_APPLY_DATABASE_ID!,
-      sorts: [
-        {
-          property: '지원일시',
-          direction: 'descending',
-        },
-      ],
+    const applications = await Apply.findAll({
+      order: [['createdAt', 'DESC']],
     });
 
-    const applications = await Promise.all(
-      response.results.map(async (page: any) => {
-        const mongoId = page.properties['MongoDB ID']?.rich_text[0]?.text.content;
-        let mongoData = null;
-        
-        if (mongoId) {
-          mongoData = await Apply.findById(mongoId);
+    const result = await Promise.all(
+      applications.map(async (application) => {
+        const notionPageId = application.notionPageId;
+        let notionData = null;
+
+        if (notionPageId) {
+          notionData = await notion.pages.retrieve({
+            page_id: notionPageId,
+          });
         }
 
         return {
-          id: page.id,
-          mongoId: mongoId,
-          name: page.properties['이름'].title[0]?.text.content,
-          email: page.properties['이메일'].email,
-          phone: page.properties['연락처'].phone_number,
-          category: page.properties['카테고리'].select?.name,
-          message: page.properties['자기소개'].rich_text[0]?.text.content,
-          portfolio: page.properties['포토폴리오'].url,
-          status: page.properties['상태'].status?.name,
-          createdAt: mongoData?.createdAt || page.created_time,
-          note: page.properties['메모']?.rich_text[0]?.text.content,
-          mongoData: mongoData,
+          id: application.id,
+          name: application.name,
+          email: application.email,
+          phone: application.phone,
+          category: application.category,
+          message: application.message,
+          portfolio: application.portfolioUrl,
+          status: application.status,
+          createdAt: application.createdAt,
+          notionPageId: notionPageId,
+          notionData: notionData,
         };
       })
     );
 
-    res.json(applications);
+    res.json(result);
   } catch (error) {
     console.error('Error fetching applications:', error);
     res.status(500).json({ error: '지원자 목록 조회 중 오류가 발생했습니다.' });

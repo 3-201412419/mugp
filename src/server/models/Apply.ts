@@ -1,39 +1,73 @@
-import mongoose from 'mongoose';
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../config/db';
 
-const ApplySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-    enum: ['influencer', 'artist', 'actor'],
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-  portfolioUrl: {
-    type: String,
-  },
-  notionPageId: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  collection: 'applies'
-});
+export interface ApplyAttributes {
+  id?: number;
+  name: string;
+  email: string;
+  phone: string;
+  category: string;
+  message?: string;
+  portfolioUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-export default mongoose.model('Apply', ApplySchema);
+class Apply extends Model<ApplyAttributes> implements ApplyAttributes {
+  public id!: number;
+  public name!: string;
+  public email!: string;
+  public phone!: string;
+  public category!: string;
+  public message!: string;
+  public portfolioUrl!: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+Apply.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [['influencer', 'mc', 'creator']],
+      },
+    },
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    portfolioUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'Apply',
+    tableName: 'applies',
+  }
+);
+
+export default Apply;
