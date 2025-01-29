@@ -66,25 +66,29 @@ const ApplyPage: React.FC = () => {
         body: formDataToSend,
       });
 
-      const result = await response.json();
-
-      if (result.success) {
-        alert(t('apply.success'));
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          category: 'influencer',
-          message: '',
-          portfolio: null
-        });
-      } else {
-        throw new Error(result.error);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit application');
       }
+
+      const result = await response.json();
+      alert(t('apply.success'));
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        category: 'influencer',
+        message: '',
+        portfolio: null
+      });
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert(t('apply.errors.submission'));
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert(t('apply.errors.submission'));
+      }
     }
   };
 
@@ -174,9 +178,9 @@ const ApplyPage: React.FC = () => {
               required
               $focused={focused === 'category'}
             >
-              <option value="influencer">{t('apply.categories.influencer')}</option>
-              <option value="artist">{t('apply.categories.artist')}</option>
-              <option value="actor">{t('apply.categories.actor')}</option>
+              <option value="influencer">인플루언서</option>
+              <option value="creator">크리에이터</option>
+              <option value="mc">MC</option>
             </Select>
           </FormGroup>
 

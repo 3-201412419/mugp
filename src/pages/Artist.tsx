@@ -32,15 +32,27 @@ function Artist() {
     const fetchArtists = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ArtistDocument[]>(`http://localhost:5000/api/artists${category ? `?category=${category}` : ''}`);
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        console.log('Fetching artists from:', `${baseURL}/api/artists${category ? `?category=${category}` : ''}`);
+        
+        const response = await axios.get<ArtistDocument[]>(`${baseURL}/api/artists${category ? `?category=${category}` : ''}`);
+        console.log('Artists data received:', response.data);
+        
         const filteredAndSortedArtists = response.data
           .filter((artist: ArtistDocument) => artist.isActive)
           .sort((a: ArtistDocument, b: ArtistDocument) => a.order - b.order);
+        
+        console.log('Filtered and sorted artists:', filteredAndSortedArtists);
         setArtists(filteredAndSortedArtists);
         setError(null);
-      } catch (err) {
-        setError('Failed to fetch artists');
-        console.error('Error fetching artists:', err);
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.error || err.message || '아티스트 정보를 불러오는데 실패했습니다.';
+        console.error('Error details:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status
+        });
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -59,11 +71,11 @@ function Artist() {
             <ArtistCard key={artist._id}>
               <ImageContainer>
                 <ArtistImage src={artist.image} alt={artist.name} />
+                <ArtistInfo>
+                  <ArtistName>{artist.name}</ArtistName>
+                  <ArtistDescription>{artist.description}</ArtistDescription>
+                </ArtistInfo>
               </ImageContainer>
-              <ArtistInfo>
-                <ArtistName>{artist.name}</ArtistName>
-                <ArtistDescription>{artist.description}</ArtistDescription>
-              </ArtistInfo>
             </ArtistCard>
           ))}
         </ArtistGrid>
@@ -80,52 +92,65 @@ const Container = styled.div`
 
 const ArtistGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 40px;
-  padding: 20px 0;
-  max-width: 1000px;
-  margin: 0 auto;
-`;
-
-const ArtistCard = styled.div`
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    transform: translateY(-5px);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
 `;
 
 const ImageContainer = styled.div`
+  position: relative;
   width: 100%;
-  height: 200px;
-  border-radius: 10px 10px 0 0;
+  padding-top: 133.33%; // 3:4 비율
   overflow: hidden;
 `;
 
 const ArtistImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 `;
 
 const ArtistInfo = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
 `;
 
-const ArtistName = styled.h2`
+const ArtistName = styled.h3`
+  margin: 0;
   font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-weight: bold;
 `;
 
 const ArtistDescription = styled.p`
-  font-size: 1.2rem;
-  font-weight: 400;
-  margin-bottom: 20px;
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+`;
+
+const ArtistCard = styled.div`
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    
+    ${ArtistImage} {
+      transform: scale(1.05);
+    }
+  }
 `;
 
 export default Artist;

@@ -1,28 +1,40 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/db';
 
+// 유효한 카테고리 값들
+export const VALID_CATEGORIES = ['influencer', 'creator', 'mc'] as const;
+export type ApplyCategory = typeof VALID_CATEGORIES[number];
+
+// 유효한 상태 값들
+export const VALID_STATUSES = ['pending', 'reviewing', 'accepted', 'rejected'] as const;
+export type ApplyStatus = typeof VALID_STATUSES[number];
+
 export interface ApplyAttributes {
   id?: number;
   name: string;
   email: string;
   phone: string;
-  category: string;
+  category: ApplyCategory;
   message?: string;
-  portfolioUrl?: string;
+  portfolioUrl?: string | null;
+  notionPageId?: string | null;
+  status?: ApplyStatus;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 class Apply extends Model<ApplyAttributes> implements ApplyAttributes {
-  public id!: number;
-  public name!: string;
-  public email!: string;
-  public phone!: string;
-  public category!: string;
-  public message!: string;
-  public portfolioUrl!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare name: string;
+  declare email: string;
+  declare phone: string;
+  declare category: ApplyCategory;
+  declare message: string;
+  declare portfolioUrl: string | null;
+  declare notionPageId: string | null;
+  declare status: ApplyStatus;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 Apply.init(
@@ -51,7 +63,7 @@ Apply.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: [['influencer', 'mc', 'creator']],
+        isIn: [VALID_CATEGORIES],
       },
     },
     message: {
@@ -62,6 +74,18 @@ Apply.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    notionPageId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'pending',
+      validate: {
+        isIn: [VALID_STATUSES],
+      },
+    }
   },
   {
     sequelize,

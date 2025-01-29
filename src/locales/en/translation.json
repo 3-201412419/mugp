@@ -1,0 +1,32 @@
+{
+  "apply": {
+    "title": "Apply",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "category": "Category",
+    "message": "Introduction",
+    "portfolio": "Portfolio",
+    "submit": "Submit",
+    "categories": {
+      "influencer": "Influencer",
+      "creator": "Creator",
+      "mc": "MC/Show Host"
+    },
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email",
+      "phone": "Enter your phone number",
+      "message": "Enter your introduction"
+    },
+    "guides": {
+      "phone": "Enter numbers only without '-'",
+      "message": "Freely write about your experience, skills, awards, etc."
+    },
+    "success": "Your application has been submitted successfully.",
+    "errors": {
+      "submission": "An error occurred while submitting your application.",
+      "fileSize": "File size cannot exceed 10MB."
+    }
+  }
+}

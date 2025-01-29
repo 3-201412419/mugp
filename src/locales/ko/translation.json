@@ -1,0 +1,32 @@
+{
+  "apply": {
+    "title": "지원하기",
+    "name": "이름",
+    "email": "이메일",
+    "phone": "연락처",
+    "category": "카테고리",
+    "message": "자기소개",
+    "portfolio": "포트폴리오",
+    "submit": "제출하기",
+    "categories": {
+      "influencer": "인플루언서",
+      "creator": "크리에이터",
+      "mc": "MC/쇼호스트"
+    },
+    "placeholders": {
+      "name": "이름을 입력해주세요",
+      "email": "이메일을 입력해주세요",
+      "phone": "연락처를 입력해주세요",
+      "message": "자기소개를 입력해주세요"
+    },
+    "guides": {
+      "phone": "'-' 없이 숫자만 입력해주세요",
+      "message": "경력, 특기, 수상내역 등을 자유롭게 작성해주세요"
+    },
+    "success": "지원서가 성공적으로 제출되었습니다.",
+    "errors": {
+      "submission": "지원서 제출 중 오류가 발생했습니다.",
+      "fileSize": "파일 크기는 10MB를 초과할 수 없습니다."
+    }
+  }
+}
