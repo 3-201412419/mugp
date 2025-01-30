@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { initDatabase } from './server/config/db';
-import artistsRouter from './routes/artistRoutes';
+import artistsRouter from './server/routes/artists';
 import applyRouter from './server/routes/apply';
 
 dotenv.config();
@@ -10,7 +10,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5000', 'https://3-201412419.github.io'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

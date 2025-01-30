@@ -1,62 +1,143 @@
-import express from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import Artist from '../models/Artist';
 import { WhereOptions } from 'sequelize';
 import { ArtistAttributes } from '../models/Artist';
 
-const router = express.Router();
+const router = Router();
 
-// 샘플 이미지 URL 업데이트
-const updateImageUrls = async () => {
-  try {
-    const sampleImageUrl = 'https://via.placeholder.com/300x400';
-    await Artist.update(
-      { image: sampleImageUrl },
-      { where: {} }
-    );
-    console.log('Sample image URLs updated successfully');
-  } catch (error) {
-    console.error('Error updating image URLs:', error);
-  }
-};
+type AsyncRequestHandler<P = {}, ResBody = any, ReqBody = any, ReqQuery = any> = (
+  req: Request<P, ResBody, ReqBody, ReqQuery>,
+  res: Response<ResBody>,
+  next: NextFunction
+) => Promise<void>;
 
-// 서버 시작시 이미지 URL 업데이트
-updateImageUrls();
+interface GetArtistQuery {
+  category?: string;
+}
+
+interface CreateArtistBody {
+  name: string;
+  category: ArtistAttributes['category'];
+  image: string;
+  description: string;
+  order?: number;
+}
+
+interface UpdateArtistBody extends CreateArtistBody {
+  isActive?: boolean;
+}
+
+interface ArtistParams {
+  id: string;
+}
 
 // 아티스트 목록 조회
-router.get('/', async (req, res) => {
+const getArtists: AsyncRequestHandler<{}, any, any, GetArtistQuery> = async (req, res) => {
   try {
     const { category } = req.query;
     console.log('Received request for artists with category:', category);
 
     const where: WhereOptions<ArtistAttributes> = {
       isActive: true,
-      ...(category ? { category: category as string } : {})
+      ...(category ? { category: category as ArtistAttributes['category'] } : {})
     };
-    console.log('Query conditions:', where);
 
     const artists = await Artist.findAll({
       where,
-      order: [
-        ['order', 'ASC']
-      ]
+      order: [['order', 'ASC']]
     });
-
-    console.log(`Found ${artists.length} artists`);
-    if (artists.length === 0) {
-      console.log('No artists found for the given criteria');
-    }
 
     res.json(artists);
   } catch (error) {
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
-    });
+    console.error('Error fetching artists:', error);
     res.status(500).json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+};
+
+// 새 아티스트 생성
+const createArtist: AsyncRequestHandler<{}, any, CreateArtistBody> = async (req, res) => {
+  try {
+    const artist = await Artist.create({
+      name: req.body.name,
+      category: req.body.category,
+      image: req.body.image,
+      description: req.body.description,
+      order: req.body.order || 0,
+      isActive: true
+    });
+
+    res.status(201).json(artist);
+  } catch (error) {
+    console.error('Error creating artist:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// 아티스트 수정
+const updateArtist: AsyncRequestHandler<ArtistParams, any, UpdateArtistBody> = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const artist = await Artist.findByPk(Number(id));
+
+    if (!artist) {
+      res.status(404).json({ error: 'Artist not found' });
+      return;
+    }
+
+    // 업데이트할 필드만 포함하는 객체 생성
+    const updateFields: Partial<UpdateArtistBody> = {};
+    
+    if (req.body.name) updateFields.name = req.body.name;
+    if (req.body.category) updateFields.category = req.body.category;
+    if (req.body.description) updateFields.description = req.body.description;
+    if (req.body.image && req.body.image !== artist.image) updateFields.image = req.body.image;
+    if (typeof req.body.order !== 'undefined') updateFields.order = req.body.order;
+    if (typeof req.body.isActive !== 'undefined') updateFields.isActive = req.body.isActive;
+
+    await artist.update(updateFields);
+
+    res.json(artist);
+  } catch (error) {
+    console.error('Error updating artist:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// 아티스트 삭제
+const deleteArtist: AsyncRequestHandler<ArtistParams> = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const artist = await Artist.findByPk(Number(id));
+
+    if (!artist) {
+      res.status(404).json({ error: 'Artist not found' });
+      return;
+    }
+
+    await artist.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting artist:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// 라우트 설정
+router.get('/', getArtists);
+router.post('/', createArtist);
+router.put('/:id', updateArtist);
+router.delete('/:id', deleteArtist);
 
 export default router;

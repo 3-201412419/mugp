@@ -1,10 +1,10 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/db';
 
 export interface ArtistAttributes {
-  id?: number;
+  id: number;
   name: string;
-  category: string;
+  category: 'influencer' | 'mc' | 'creator';
   description: string;
   image: string;
   isActive: boolean;
@@ -13,10 +13,12 @@ export interface ArtistAttributes {
   updatedAt?: Date;
 }
 
-class Artist extends Model<ArtistAttributes> implements ArtistAttributes {
+interface ArtistCreationAttributes extends Optional<ArtistAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
+class Artist extends Model<ArtistAttributes, ArtistCreationAttributes> implements ArtistAttributes {
   public id!: number;
   public name!: string;
-  public category!: string;
+  public category!: 'influencer' | 'mc' | 'creator';
   public description!: string;
   public image!: string;
   public isActive!: boolean;
@@ -37,11 +39,8 @@ Artist.init(
       allowNull: false,
     },
     category: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('influencer', 'mc', 'creator'),
       allowNull: false,
-      validate: {
-        isIn: [['influencer', 'mc', 'creator']],
-      },
     },
     description: {
       type: DataTypes.TEXT,
