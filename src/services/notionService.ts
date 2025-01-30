@@ -1,32 +1,29 @@
-import { NotionEvent } from '../types/calendar.types';
+import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+export interface NotionEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+// API URL을 환경 변수에서 가져오거나 기본값 사용
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const getNotionEvents = async (): Promise<NotionEvent[]> => {
   try {
-    console.log('Fetching events from server...');
-    const response = await fetch(`${API_BASE_URL}/calendar/events`);
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Server error:', errorData);
-      throw new Error(`Failed to fetch events: ${errorData.details || 'Unknown error'}`);
-    }
-    
-    const events = await response.json();
-    console.log('Received events from server:', events);
-    
-    const processedEvents = events.map((event: any) => {
-      const processedEvent = {
-        ...event,
-        date: new Date(event.date)
-      };
-      console.log('Processed event:', processedEvent);
-      return processedEvent;
+    const response = await axios.get<NotionEvent[]>(`${API_URL}/api/calendar/events`, {
+      headers: {
+        'Accept': 'application/json',
+      },
     });
     
-    console.log('Final processed events:', processedEvents);
-    return processedEvents;
+    console.log('Calendar events response:', response.data);
+    
+    return response.data.map(event => ({
+      ...event,
+      date: new Date(event.date).toISOString()
+    }));
   } catch (error) {
     console.error('Error in getNotionEvents:', error);
     return [];

@@ -15,7 +15,10 @@ const CalendarPage: React.FC = () => {
     const fetchEvents = async () => {
       try {
         const notionEvents = await getNotionEvents();
-        setEvents(notionEvents);
+        setEvents(notionEvents.map(event => ({
+          ...event,
+          date: new Date(event.date)
+        })));
         setLoading(false);
       } catch (err) {
         setError('Failed to load events');
@@ -80,7 +83,6 @@ const CalendarPage: React.FC = () => {
             <EventItem key={event.id}>
               <EventHeader>
                 <EventTitle>{event.title}</EventTitle>
-                <EventCategory>{event.category}</EventCategory>
               </EventHeader>
               <EventTime>
                 {new Date(event.date).toLocaleTimeString('ko-KR', {
@@ -222,15 +224,6 @@ const EventDescription = styled.p`
   font-size: 0.9rem;
   color: #666;
   line-height: 1.4;
-`;
-
-const EventCategory = styled.span`
-  display: inline-block;
-  padding: 4px 8px;
-  background-color: #e9ecef;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  color: #495057;
 `;
 
 const NoEvents = styled.p`
