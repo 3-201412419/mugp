@@ -23,9 +23,18 @@ const Navigation: React.FC<NavigationProps> = ({
   const navigate = useNavigate();
   const isHome = location.pathname === '/mugp' || location.pathname === '/mugp/';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isArtistDropdownOpen, setIsArtistDropdownOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      setIsArtistDropdownOpen(false);
+    }
+  };
+
+  const toggleArtistDropdown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsArtistDropdownOpen(!isArtistDropdownOpen);
   };
 
   const handleMenuClick = (menu: MenuType) => {
@@ -35,11 +44,13 @@ const Navigation: React.FC<NavigationProps> = ({
       onMenuChange(menu);
     }
     setIsMenuOpen(false);
+    setIsArtistDropdownOpen(false);
   };
 
   const handleLanguageClick = (language: Language) => {
     onLanguageChange(language);
     setIsMenuOpen(false);
+    setIsArtistDropdownOpen(false);
   };
 
   const isArtistPage = location.pathname.includes('/artist');
@@ -144,11 +155,12 @@ const Navigation: React.FC<NavigationProps> = ({
               <MobileMenuItemWithDropdown>
                 <MobileDropdownTrigger 
                   isSelected={currentMenu === 'ARTIST' || isArtistPage}
-                  onClick={() => handleMenuClick('ARTIST')}
+                  isOpen={isArtistDropdownOpen}
+                  onClick={toggleArtistDropdown}
                 >
                   ARTIST
                 </MobileDropdownTrigger>
-                <MobileDropdownContent>
+                <MobileDropdownContent isOpen={isArtistDropdownOpen}>
                   <MobileDropdownItem 
                     isSelected={currentMenu === 'INFLUENCER'}
                     onClick={() => handleMenuClick('INFLUENCER')}
@@ -335,24 +347,62 @@ const MobileMenuItemWithDropdown = styled.div`
   width: 100%;
 `;
 
-const MobileDropdownTrigger = styled.button<{ isSelected: boolean }>`
+const MobileDropdownTrigger = styled.button<{ isSelected: boolean, isOpen?: boolean }>`
   width: 100%;
   text-align: center;
   font-size: 1.2rem;
   padding: 15px;
+  background: none;
+  border: none;
+  color: ${props => props.isSelected ? '#000' : '#666'};
+  position: relative;
+  transition: all 0.3s ease;
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: translateY(-50%) ${props => props.isOpen ? 'rotate(-135deg)' : 'rotate(45deg)'};
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    color: #000;
+    background-color: #f8f9fa;
+
+    &:after {
+      border-color: #000;
+    }
+  }
 `;
 
-const MobileDropdownContent = styled.div`
-  display: none;
+const MobileDropdownContent = styled.div<{ isOpen: boolean }>`
   width: 100%;
   background-color: #f9f9f9;
-  padding: 8px 0;
+  overflow: hidden;
+  max-height: ${props => props.isOpen ? '300px' : '0'};
+  transition: max-height 0.3s ease;
 `;
 
 const MobileDropdownItem = styled.button<{ isSelected: boolean }>`
+  width: 100%;
   text-align: center;
   font-size: 1.1rem;
   padding: 12px;
+  background: none;
+  border: none;
+  color: ${props => props.isSelected ? '#000' : '#666'};
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #000;
+    background-color: #f0f0f0;
+  }
 `;
 
 const MobileMenuItem = styled.button<{ isSelected: boolean }>`
@@ -360,6 +410,15 @@ const MobileMenuItem = styled.button<{ isSelected: boolean }>`
   padding: 15px;
   width: 100%;
   text-align: center;
+  background: none;
+  border: none;
+  color: ${props => props.isSelected ? '#000' : '#666'};
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #000;
+    background-color: #f8f9fa;
+  }
 `;
 
 const LanguageContainer = styled.div`

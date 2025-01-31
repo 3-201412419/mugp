@@ -5,6 +5,7 @@ export interface NotionEvent {
   title: string;
   description: string;
   date: string;
+  category: string;
 }
 
 // API URL을 환경 변수에서 가져오거나 기본값 사용
@@ -22,7 +23,8 @@ export const getNotionEvents = async (): Promise<NotionEvent[]> => {
     
     return response.data.map(event => ({
       ...event,
-      date: new Date(event.date).toISOString()
+      date: new Date(event.date).toISOString(),
+      category: event.category || 'default'  // category가 없는 경우 기본값 설정
     }));
   } catch (error) {
     console.error('Error in getNotionEvents:', error);
