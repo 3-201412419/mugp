@@ -2,7 +2,6 @@
   "name": "mugp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://[3-201412419].github.io/mugp",
   "dependencies": {
     "@notionhq/client": "^2.2.15",
     "@types/multer": "^1.4.12",
