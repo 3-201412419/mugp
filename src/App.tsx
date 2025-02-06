@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
 import Artist from './pages/Artist';
+import ArtistDetail from './pages/ArtistDetail';
 import Audition from './pages/Audition';
 import News from './pages/News';
 import Calendar from './pages/Calendar';
@@ -76,9 +77,11 @@ const AppContent = () => {
           <Route path="/mugp" element={<Home />} />
           <Route path="/mugp/about" element={<About />} />
           <Route path="/mugp/artist/:category" element={<Artist />} />
+          <Route path="/mugp/artist/:category/:id" element={<ArtistDetail />} />
+          <Route path="/mugp/audition" element={<Audition />} />
+          <Route path="/mugp/news" element={<News />} />
           <Route path="/mugp/calendar" element={<Calendar />} />
           <Route path="/mugp/apply" element={<Apply />} />
-          <Route path="/" element={<Home />} />
         </Routes>
       </MainContent>
       <Footer />

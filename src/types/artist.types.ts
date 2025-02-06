@@ -15,6 +15,8 @@ export interface ArtistData {
   socialLinks: SocialLinks;
   order: number;
   isActive: boolean;
+  hobbies?: string[];
+  specialties?: string[];
 }
 
 // MongoDB 문서 타입 (API 응답용)

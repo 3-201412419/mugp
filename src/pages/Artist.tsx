@@ -61,6 +61,10 @@ function Artist() {
     fetchArtists();
   }, [category, navigate]);
 
+  const handleArtistClick = (artistName: string) => {
+    navigate(`/mugp/artist/${category}/${encodeURIComponent(artistName)}`);
+  };
+
   return (
     <Container>
       {error ? (
@@ -68,7 +72,7 @@ function Artist() {
       ) : (
         <ArtistGrid>
           {artists.map((artist) => (
-            <ArtistCard key={artist._id}>
+            <ArtistCard key={artist._id} onClick={() => handleArtistClick(artist.name)}>
               <ImageContainer>
                 <ArtistImage src={artist.image} alt={artist.name} />
                 <ArtistInfo>
