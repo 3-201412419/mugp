@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
 import path from 'path';
+import dotenv from 'dotenv';
 
 // .env 파일의 절대 경로 지정
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
@@ -130,7 +130,7 @@ const sampleApplies = [
 export const initDatabase = async () => {
   try {
     await sequelize.authenticate();
-    console.log('MySQL Database connected successfully');
+    console.log('Database connection has been established successfully.');
 
     // Sync database without dropping tables
     await sequelize.sync({ force: false, alter: true });

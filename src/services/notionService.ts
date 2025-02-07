@@ -13,7 +13,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const getNotionEvents = async (): Promise<NotionEvent[]> => {
   try {
-    const response = await axios.get<NotionEvent[]>(`${API_URL}/api/calendar/events`, {
+    const response = await axios.get<NotionEvent[]>(`${API_URL}/api/calendar`, {
       headers: {
         'Accept': 'application/json',
       },
