@@ -15,6 +15,7 @@ import Audition from './pages/Audition';
 import News from './pages/News';
 import Calendar from './pages/Calendar';
 import Apply from './pages/Apply';
+import Terms from './pages/Terms';
 
 import type { Language, MenuType } from './types/common.types';
 
@@ -82,6 +83,7 @@ const AppContent = () => {
           <Route path="/news" element={<News />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/apply" element={<Apply />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </MainContent>
       <Footer />
