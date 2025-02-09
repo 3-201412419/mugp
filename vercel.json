@@ -22,7 +22,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/"
     }
-  ]
+  ],
+  "nodeVersion": "18.x"
 }
