@@ -37,30 +37,30 @@ const AppContent = () => {
     setCurrentMenu(menu);
     switch (menu) {
       case 'ABOUT':
-        navigate('/mugp/about');
+        navigate('/about');
         break;
       case 'ARTIST':
       case 'INFLUENCER':
-        navigate('/mugp/artist/influencer');
+        navigate('/artist/influencer');
         break;
       case 'MC':
-        navigate('/mugp/artist/mc');
+        navigate('/artist/mc');
         break;
       case 'CREATOR':
-        navigate('/mugp/artist/creator');
+        navigate('/artist/creator');
         break;
       case 'CALENDAR':
-        navigate('/mugp/calendar');
+        navigate('/calendar');
         break;
       case 'APPLY':
-        navigate('/mugp/apply');
+        navigate('/apply');
         break;
     }
   };
 
   const handleLogoClick = () => {
     setCurrentMenu(null);
-    navigate('/mugp');
+    navigate('/');
   };
 
   return (
@@ -75,15 +75,15 @@ const AppContent = () => {
       />
       <MainContent>
         <Routes>
-          <Route path="/mugp" element={<Home />} />
-          <Route path="/mugp/about" element={<About />} />
-          <Route path="/mugp/artist/:category" element={<Artist />} />
-          <Route path="/mugp/artist/:category/:name" element={<ArtistDetail />} />
-          <Route path="/mugp/audition" element={<Audition />} />
-          <Route path="/mugp/news" element={<News />} />
-          <Route path="/mugp/calendar" element={<Calendar />} />
-          <Route path="/mugp/apply" element={<Apply />} />
-          <Route path="/mugp/terms" element={<Terms />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/artist/:category" element={<Artist />} />
+          <Route path="/artist/:category/:name" element={<ArtistDetail />} />
+          <Route path="/audition" element={<Audition />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/apply" element={<Apply />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </MainContent>
       <Footer />
@@ -94,7 +94,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <Router>
-      <AppContent />
+      <Routes>
+        <Route path="/*" element={<AppContent />} />
+      </Routes>
     </Router>
   );
 };
