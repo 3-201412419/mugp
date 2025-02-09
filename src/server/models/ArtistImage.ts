@@ -6,7 +6,7 @@ class ArtistImage extends Model {
   declare id: number;
   declare artistId: number;
   declare image: string;
-  declare order: number;
+  declare sort_order: number;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -30,7 +30,7 @@ ArtistImage.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    order: {
+    sort_order: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },

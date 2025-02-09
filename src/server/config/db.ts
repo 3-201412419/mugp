@@ -28,7 +28,7 @@ const sampleArtists = [
     description: "1백만 팔로워를 보유한 뷰티/패션 인플루언서",
     image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop",
     isActive: true,
-    order: 1,
+    sort_order: 1,
   },
   {
     id: 7,
@@ -37,7 +37,7 @@ const sampleArtists = [
     description: "유명 유튜브 채널 운영자, 구독자 50만",
     image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&auto=format&fit=crop",
     isActive: true,
-    order: 1,
+    sort_order: 1,
   },
   {
     id: 8,
@@ -46,7 +46,7 @@ const sampleArtists = [
     description: "방송 진행 경력 10년의 전문 MC",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop",
     isActive: true,
-    order: 1,
+    sort_order: 1,
   },
   {
     id: 9,
@@ -55,7 +55,7 @@ const sampleArtists = [
     description: "트렌디한 라이프스타일 컨텐츠 제작",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop",
     isActive: true,
-    order: 2,
+    sort_order: 2,
   },
   {
     id: 10,
@@ -64,7 +64,7 @@ const sampleArtists = [
     description: "쇼츠 전문 크리에이터, 평균 조회수 100만",
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop",
     isActive: true,
-    order: 2,
+    sort_order: 2,
   }
 ];
 
@@ -132,8 +132,8 @@ export const initDatabase = async () => {
     await sequelize.authenticate();
     console.log('Database connection has been established successfully.');
 
-    // Sync database without dropping tables
-    await sequelize.sync({ force: false, alter: true });
+    // Sync database without altering tables
+    await sequelize.sync({ force: false, alter: false });
     
     // Import models
     const Artist = require('../models/Artist').default;

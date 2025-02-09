@@ -8,7 +8,7 @@ export interface ArtistAttributes {
   description: string;
   image: string;
   isActive: boolean;
-  order: number;
+  sort_order: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,7 +22,7 @@ class Artist extends Model<ArtistAttributes, ArtistCreationAttributes> implement
   public description!: string;
   public image!: string;
   public isActive!: boolean;
-  public order!: number;
+  public sort_order!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -54,8 +54,9 @@ Artist.init(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    order: {
+    sort_order: {
       type: DataTypes.INTEGER,
+      allowNull: true,
       defaultValue: 0,
     },
   },

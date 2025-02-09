@@ -13,7 +13,7 @@ export interface ArtistData {
   image: string;
   description: string;
   socialLinks: SocialLinks;
-  order: number;
+  sort_order: number;
   isActive: boolean;
   hobbies?: string[];
   specialties?: string[];

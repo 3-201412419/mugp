@@ -13,10 +13,10 @@ interface Artist {
   images: Array<{
     id: number;
     image: string;
-    order: number;
+    sort_order: number;
   }>;
   isActive: boolean;
-  order: number;
+  sort_order: number;
 }
 
 const ArtistDetail: React.FC = () => {
@@ -115,6 +115,7 @@ const ArtistDetail: React.FC = () => {
             </AnimatePresence>
             {allImages.length > 1 && (
               <>
+
                 <NavButton onClick={handlePrevImage} left>
                   &#10094;
                 </NavButton>
@@ -131,6 +132,7 @@ const ArtistDetail: React.FC = () => {
                   ))}
                 </ImageIndicators>
               </>
+
             )}
           </SlideShowContainer>
         </ImageSection>
@@ -231,7 +233,7 @@ const Indicator = styled.div<IndicatorProps>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: ${props => props.active ? 'white' : 'rgba(255, 255, 255, 0.5)'};
+  background: ${props => props.active ? 'white' : 'rgba(255, 255, 255, 0.5)'}; 
   cursor: pointer;
   transition: background-color 0.3s;
 

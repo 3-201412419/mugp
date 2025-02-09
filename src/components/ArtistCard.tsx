@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 interface ArtistImage {
   id: number;
   image: string;
-  order: number;
+  sort_order: number;
 }
 
 interface Artist {
@@ -16,7 +16,7 @@ interface Artist {
   image: string;
   images: ArtistImage[];
   isActive: boolean;
-  order: number;
+  sort_order: number;
 }
 
 interface ArtistCardProps {

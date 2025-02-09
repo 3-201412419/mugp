@@ -22,7 +22,7 @@ interface CreateArtistBody {
   category: ArtistAttributes['category'];
   image: string;
   description: string;
-  order?: number;
+  sort_order?: number;
 }
 
 interface UpdateArtistBody extends CreateArtistBody {
@@ -50,9 +50,9 @@ const getArtists: AsyncRequestHandler<{}, any, any, GetArtistQuery> = async (req
       include: [{
         model: ArtistImage,
         as: 'images',
-        attributes: ['id', 'image', 'order'],
+        attributes: ['id', 'image', 'sort_order'],
       }],
-      order: [['order', 'ASC'], [{ model: ArtistImage, as: 'images' }, 'order', 'ASC']]
+      order: [['sort_order', 'ASC'], [{ model: ArtistImage, as: 'images' }, 'sort_order', 'ASC']]
     });
 
     if (artists.length === 0) {
@@ -78,7 +78,7 @@ const createArtist: AsyncRequestHandler<{}, any, CreateArtistBody> = async (req,
       category: req.body.category,
       image: req.body.image,
       description: req.body.description,
-      order: req.body.order || 0,
+      sort_order: req.body.sort_order || 0,
       isActive: true
     });
 
@@ -110,7 +110,7 @@ const updateArtist: AsyncRequestHandler<ArtistParams, any, UpdateArtistBody> = a
     if (req.body.category) updateFields.category = req.body.category;
     if (req.body.description) updateFields.description = req.body.description;
     if (req.body.image && req.body.image !== artist.image) updateFields.image = req.body.image;
-    if (typeof req.body.order !== 'undefined') updateFields.order = req.body.order;
+    if (typeof req.body.sort_order !== 'undefined') updateFields.sort_order = req.body.sort_order;
     if (typeof req.body.isActive !== 'undefined') updateFields.isActive = req.body.isActive;
 
     await artist.update(updateFields);
