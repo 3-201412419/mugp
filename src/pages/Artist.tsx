@@ -74,24 +74,36 @@ function Artist() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Container>
+        <LoadingMessage>로딩 중...</LoadingMessage>
+      </Container>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <Container>
+        <NoDataMessage>현재 등록된 아티스트가 없습니다.</NoDataMessage>
+      </Container>
+    );
   }
 
   return (
     <Container>
-      <ArtistGrid>
-        {artists.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            onClick={() => handleArtistClick(artist.name)}
-          />
-        ))}
-      </ArtistGrid>
+      {artists.length === 0 ? (
+        <NoDataMessage>현재 등록된 아티스트가 없습니다.</NoDataMessage>
+      ) : (
+        <ArtistGrid>
+          {artists.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              artist={artist}
+              onClick={() => handleArtistClick(artist.name)}
+            />
+          ))}
+        </ArtistGrid>
+      )}
     </Container>
   );
 }
@@ -105,8 +117,23 @@ const Container = styled.div`
 const ArtistGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
+  gap: 40px;
+  margin-top: 20px;
+`;
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  color: #666;
+`;
+
+const NoDataMessage = styled.div`
+  text-align: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  color: #666;
+  width: 100%;
 `;
 
 export default Artist;
