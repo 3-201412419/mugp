@@ -14,6 +14,7 @@ type AsyncRequestHandler<P = {}, ResBody = any, ReqBody = any, ReqQuery = any> =
 
 interface GetArtistQuery {
   category?: string;
+  name?: string;
 }
 
 interface CreateArtistBody {
@@ -35,12 +36,13 @@ interface ArtistParams {
 // 아티스트 목록 조회
 const getArtists: AsyncRequestHandler<{}, any, any, GetArtistQuery> = async (req, res) => {
   try {
-    const { category } = req.query;
-    console.log('Received request for artists with category:', category);
+    const { category, name } = req.query;
+    console.log('Received request for artists with category:', category, 'and name:', name);
 
     const where: WhereOptions<ArtistAttributes> = {
       isActive: true,
-      ...(category ? { category: category as ArtistAttributes['category'] } : {})
+      ...(category ? { category: category as ArtistAttributes['category'] } : {}),
+      ...(name ? { name: decodeURIComponent(name as string) } : {})
     };
 
     const artists = await Artist.findAll({
@@ -52,6 +54,11 @@ const getArtists: AsyncRequestHandler<{}, any, any, GetArtistQuery> = async (req
       }],
       order: [['order', 'ASC'], [{ model: ArtistImage, as: 'images' }, 'order', 'ASC']]
     });
+
+    if (artists.length === 0) {
+      res.status(404).json({ error: 'Artist not found' });
+      return;
+    }
 
     res.json(artists);
   } catch (error) {

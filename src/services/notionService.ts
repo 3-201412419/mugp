@@ -13,7 +13,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const getNotionEvents = async (): Promise<NotionEvent[]> => {
   try {
-    const response = await axios.get<NotionEvent[]>(`${API_URL}/api/calendar`, {
+    const response = await axios.get<NotionEvent[]>(`${API_URL}/api/calendar/events`, {
       headers: {
         'Accept': 'application/json',
       },
@@ -28,6 +28,6 @@ export const getNotionEvents = async (): Promise<NotionEvent[]> => {
     }));
   } catch (error) {
     console.error('Error in getNotionEvents:', error);
-    return [];
+    throw error; // 에러를 상위로 전파하여 UI에서 처리할 수 있도록 함
   }
 };

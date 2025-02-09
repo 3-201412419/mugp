@@ -25,15 +25,18 @@ const CalendarPage: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const notionEvents = await getNotionEvents();
         setEvents(notionEvents.map(event => ({
           ...event,
           date: new Date(event.date),
           category: event.category || 'default'
         })));
-        setLoading(false);
       } catch (err) {
-        setError('Failed to load events');
+        console.error('Failed to fetch calendar events:', err);
+        setError('캘린더 이벤트를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+      } finally {
         setLoading(false);
       }
     };
@@ -65,11 +68,19 @@ const CalendarPage: React.FC = () => {
   };
 
   if (loading) {
-    return <Loading>Loading events...</Loading>;
+    return (
+      <Container>
+        <Loading>캘린더 이벤트를 불러오는 중...</Loading>
+      </Container>
+    );
   }
 
   if (error) {
-    return <Error>{error}</Error>;
+    return (
+      <Container>
+        <Error>{error}</Error>
+      </Container>
+    );
   }
 
   return (

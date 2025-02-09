@@ -37,30 +37,30 @@ const AppContent = () => {
     setCurrentMenu(menu);
     switch (menu) {
       case 'ABOUT':
-        navigate('/about');
+        navigate('/mugp/about');
         break;
       case 'ARTIST':
       case 'INFLUENCER':
-        navigate('/artist/influencer');
+        navigate('/mugp/artist/influencer');
         break;
       case 'MC':
-        navigate('/artist/mc');
+        navigate('/mugp/artist/mc');
         break;
       case 'CREATOR':
-        navigate('/artist/creator');
+        navigate('/mugp/artist/creator');
         break;
       case 'CALENDAR':
-        navigate('/calendar');
+        navigate('/mugp/calendar');
         break;
       case 'APPLY':
-        navigate('/apply');
+        navigate('/mugp/apply');
         break;
     }
   };
 
   const handleLogoClick = () => {
     setCurrentMenu(null);
-    navigate('/');
+    navigate('/mugp');
   };
 
   return (
@@ -75,15 +75,15 @@ const AppContent = () => {
       />
       <MainContent>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/artist/:category" element={<Artist />} />
-          <Route path="/artist/:category/:id" element={<ArtistDetail />} />
-          <Route path="/audition" element={<Audition />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/apply" element={<Apply />} />
-          <Route path="/terms" element={<Terms />} />
+          <Route path="/mugp" element={<Home />} />
+          <Route path="/mugp/about" element={<About />} />
+          <Route path="/mugp/artist/:category" element={<Artist />} />
+          <Route path="/mugp/artist/:category/:name" element={<ArtistDetail />} />
+          <Route path="/mugp/audition" element={<Audition />} />
+          <Route path="/mugp/news" element={<News />} />
+          <Route path="/mugp/calendar" element={<Calendar />} />
+          <Route path="/mugp/apply" element={<Apply />} />
+          <Route path="/mugp/terms" element={<Terms />} />
         </Routes>
       </MainContent>
       <Footer />
