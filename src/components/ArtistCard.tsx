@@ -46,7 +46,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist, onClick }) => {
       </ImageWrapper>
       <InfoContainer>
         <ArtistName>{artist.name}</ArtistName>
-        <ArtistCategory>{artist.category}</ArtistCategory>
+        {/* <ArtistCategory>{artist.category}</ArtistCategory> */}
         {artist.description && (
           <ArtistDescription>{artist.description}</ArtistDescription>
         )}

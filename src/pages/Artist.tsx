@@ -19,10 +19,10 @@ interface Artist {
   images: Array<{
     id: number;
     image: string;
-    order: number;
+    sort_order: number;
   }>;
   isActive: boolean;
-  order: number;
+  sort_order: number;
 }
 
 type ArtistCategory = 'influencer' | 'mc' | 'creator';
@@ -49,15 +49,12 @@ function Artist() {
     const fetchArtists = async () => {
       try {
         setLoading(true);
-        const baseURL = import.meta.env.VITE_API_URL || '';
-        console.log('Fetching artists with category:', category);
-        const response = await axios.get<Artist[]>(`${baseURL}/api/artists`, {
-          params: { category }
-        });
-        
-        const filteredAndSortedArtists = response.data
+        const response = await axios.get<Artist[]>(`/api/artists${category ? `?category=${category}` : ''}`);
+        console.log('API Response:', response.data);
+        const artistData = Array.isArray(response.data) ? response.data : [];
+        const filteredAndSortedArtists = artistData
           .filter(artist => artist.isActive)
-          .sort((a, b) => a.order - b.order);
+          .sort((a, b) => a.sort_order - b.sort_order);
         
         console.log('Filtered artists:', filteredAndSortedArtists);
         setArtists(filteredAndSortedArtists);
