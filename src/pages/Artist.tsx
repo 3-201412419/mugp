@@ -42,25 +42,41 @@ function Artist() {
   useEffect(() => {
     // 유효하지 않은 카테고리인 경우 기본 페이지로 리다이렉트
     if (category && !isValidCategory(category)) {
-      navigate('/mugp/artist/influencer');
+      navigate('/artist/influencer');
       return;
     }
 
     const fetchArtists = async () => {
       try {
         setLoading(true);
+        setError(null);
         const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await axios.get<Artist[]>(`${baseURL}/api/artists${category ? `?category=${category}` : ''}`);
+        const response = await axios.get<Artist[]>(`${baseURL}/artists`, {
+          params: {
+            category: category
+          },
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        console.log('Artists response:', response.data);
+
+        if (!Array.isArray(response.data)) {
+          console.error('Invalid response format:', response.data);
+          setArtists([]);
+          return;
+        }
+
         const filteredAndSortedArtists = response.data
-          .filter(artist => artist.isActive)
+          .filter(artist => artist && artist.isActive)
           .sort((a, b) => a.order - b.order);
         
         setArtists(filteredAndSortedArtists);
         setError(null);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : '아티스트 정보를 불러오는데 실패했습니다.';
         console.error('Error fetching artists:', err);
-        setError(errorMessage);
+        setError('현재 등록된 아티스트가 없습니다.');
       } finally {
         setLoading(false);
       }
@@ -70,7 +86,7 @@ function Artist() {
   }, [category, navigate]);
 
   const handleArtistClick = (artistName: string) => {
-    navigate(`/mugp/artist/${category}/${encodeURIComponent(artistName)}`);
+    navigate(`/artist/${category}/${encodeURIComponent(artistName)}`);
   };
 
   if (loading) {

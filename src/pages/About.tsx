@@ -16,7 +16,6 @@ declare global {
 }
 
 // 상수 정의
-const KAKAO_MAP_KEY = 'c99bec32f4faa8017e6ac623bb49adea';
 const COMPANY_LOCATION = {
   lat: 35.2100,
   lng: 129.0689
@@ -24,69 +23,46 @@ const COMPANY_LOCATION = {
 
 const About = () => {
   const { t } = useTranslation();
-  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const [mapError, setMapError] = React.useState<string | null>(null);
 
-  // 카카오맵 초기화
   useEffect(() => {
-    // 카카오맵 스크립트 로드 함수
-    const loadKakaoMapScript = () => {
-      return new Promise<void>((resolve, reject) => {
-        // 이미 로드된 경우 바로 resolve
+    const initializeKakaoMap = () => {
+      if (!mapRef.current) return;
+
+      const script = document.createElement('script');
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_MAP_API_KEY}`;
+      script.async = true;
+
+      script.onload = () => {
         if (window.kakao && window.kakao.maps) {
-          resolve();
-          return;
+          const options = {
+            center: new window.kakao.maps.LatLng(37.5642135, 127.0016985),
+            level: 3
+          };
+
+          const map = new window.kakao.maps.Map(mapRef.current, options);
+          const markerPosition = new window.kakao.maps.LatLng(37.5642135, 127.0016985);
+          const marker = new window.kakao.maps.Marker({
+            position: markerPosition
+          });
+
+          marker.setMap(map);
         }
+      };
 
-        // 스크립트 생성 및 로드
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_KEY}&autoload=false`;
-        script.async = true;
-        script.onerror = () => reject(new Error('Failed to load Kakao Maps script'));
-        script.onload = () => resolve();
+      script.onerror = () => {
+        console.error('Error initializing Kakao map');
+      };
+
+      if (!document.querySelector('script[src*="dapi.kakao.com/v2/maps"]')) {
         document.head.appendChild(script);
-      });
-    };
-
-    // 지도 초기화 함수
-    const initializeMap = async () => {
-      if (!mapContainerRef.current) return;
-
-      try {
-        // 스크립트 로드 및 초기화
-        await loadKakaoMapScript();
-
-        await new Promise<void>((resolve) => {
-          window.kakao.maps.load(() => resolve());
-        });
-
-        // 지도 옵션 설정
-        const options = {
-          center: new window.kakao.maps.LatLng(COMPANY_LOCATION.lat, COMPANY_LOCATION.lng),
-          level: 3
-        };
-
-        // 지도 및 마커 생성
-        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-        const markerPosition = new window.kakao.maps.LatLng(COMPANY_LOCATION.lat, COMPANY_LOCATION.lng);
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition
-        });
-        marker.setMap(map);
-
-        // 반응형 처리: 윈도우 리사이즈 시 지도 중심점 재설정
-        window.addEventListener('resize', () => {
-          map.setCenter(new window.kakao.maps.LatLng(COMPANY_LOCATION.lat, COMPANY_LOCATION.lng));
-        });
-
-      } catch (error) {
-        console.error('Error initializing Kakao map:', error);
-        setMapError(error instanceof Error ? error.message : 'Failed to load map');
+      } else {
+        script.onload(new Event('load'));
       }
     };
 
-    initializeMap();
+    initializeKakaoMap();
   }, []);
 
   return (
@@ -106,7 +82,7 @@ const About = () => {
                   {t('about.map.error', { defaultValue: 'Failed to load map. Please try again later.' })}
                 </MapError>
               ) : (
-                <MapWrapper ref={mapContainerRef} />
+                <MapWrapper ref={mapRef} />
               )}
             </MapContainer>
             <LocationInfo>
