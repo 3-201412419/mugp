@@ -3,12 +3,13 @@
  * 비주얼한 이미지와 함께 회사의 핵심 메시지를 전달
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import YouTube from 'react-youtube';
+import ArtistCard from '../components/ArtistCard';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -42,8 +43,42 @@ const youtubeVideos = [
   }
 ];
 
+interface Artist {
+  id: number;
+  name: string;
+  category: string;
+  description: string;
+  image: string;
+  images: Array<{
+    id: number;
+    image: string;
+    order: number;
+  }>;
+  isActive: boolean;
+  order: number;
+}
+
 // 홈 컴포넌트 정의
 const Home = () => {
+  const [artists, setArtists] = useState<Artist[]>([]);
+
+  useEffect(() => {
+    // API에서 아티스트 데이터 가져오기
+    const fetchArtists = async () => {
+      try {
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await fetch(`${baseURL}/api/artists`);
+        const data = await response.json();
+        console.log('Fetched artists data:', data); // 데이터 확인용 로그
+        setArtists(data);
+      } catch (error) {
+        console.error('Error fetching artists:', error);
+      }
+    };
+
+    fetchArtists();
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -117,6 +152,16 @@ const Home = () => {
           ))}
         </Swiper>
       </YoutubeSection>
+
+      {/* 아티스트 섹션 */}
+      <ArtistsSection>
+        <SectionTitle>Our Artists</SectionTitle>
+        <ArtistGrid>
+          {artists.map((artist) => (
+            <ArtistCard key={artist.id} artist={artist} />
+          ))}
+        </ArtistGrid>
+      </ArtistsSection>
     </motion.div>
   );
 };
@@ -246,6 +291,21 @@ const VideoTitle = styled.h3`
     font-size: 1.1rem;
     margin-top: 12px;
   }
+`;
+
+// 아티스트 섹션 스타일
+const ArtistsSection = styled.section`
+  padding: 80px 20px;
+  background: #f8f8f8;
+`;
+
+const ArtistGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 export default Home;

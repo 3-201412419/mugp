@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Artist from '../models/Artist';
+import ArtistImage from '../models/ArtistImage';
 import { WhereOptions } from 'sequelize';
 import { ArtistAttributes } from '../models/Artist';
 
@@ -44,7 +45,12 @@ const getArtists: AsyncRequestHandler<{}, any, any, GetArtistQuery> = async (req
 
     const artists = await Artist.findAll({
       where,
-      order: [['order', 'ASC']]
+      include: [{
+        model: ArtistImage,
+        as: 'images',
+        attributes: ['id', 'image', 'order'],
+      }],
+      order: [['order', 'ASC'], [{ model: ArtistImage, as: 'images' }, 'order', 'ASC']]
     });
 
     res.json(artists);
