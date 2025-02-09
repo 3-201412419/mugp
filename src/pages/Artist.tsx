@@ -49,18 +49,22 @@ function Artist() {
     const fetchArtists = async () => {
       try {
         setLoading(true);
-        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await axios.get<Artist[]>(`${baseURL}/api/artists${category ? `?category=${category}` : ''}`);
+        const baseURL = import.meta.env.VITE_API_URL || '';
+        console.log('Fetching artists with category:', category);
+        const response = await axios.get<Artist[]>(`${baseURL}/api/artists`, {
+          params: { category }
+        });
+        
         const filteredAndSortedArtists = response.data
           .filter(artist => artist.isActive)
           .sort((a, b) => a.order - b.order);
         
+        console.log('Filtered artists:', filteredAndSortedArtists);
         setArtists(filteredAndSortedArtists);
         setError(null);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : '아티스트 정보를 불러오는데 실패했습니다.';
         console.error('Error fetching artists:', err);
-        setError(errorMessage);
+        setError('아티스트 정보를 불러오는데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -69,26 +73,35 @@ function Artist() {
     fetchArtists();
   }, [category, navigate]);
 
-  const handleArtistClick = (artistName: string) => {
-    navigate(`/mugp/artist/${category}/${encodeURIComponent(artistName)}`);
+  const handleArtistClick = (artist: Artist) => {
+    console.log('Artist clicked:', artist);
+    const encodedName = encodeURIComponent(artist.name);
+    const url = `/mugp/artist/${artist.category}/${encodedName}`;
+    console.log('Navigating to:', url);
+    navigate(url);
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Container><LoadingMessage>로딩 중...</LoadingMessage></Container>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <Container><ErrorMessage>{error}</ErrorMessage></Container>;
   }
 
   return (
     <Container>
+      <Title>
+        {category === 'influencer' && 'Influencer'}
+        {category === 'mc' && 'MC'}
+        {category === 'creator' && 'Creator'}
+      </Title>
       <ArtistGrid>
         {artists.map((artist) => (
           <ArtistCard
             key={artist.id}
             artist={artist}
-            onClick={() => handleArtistClick(artist.name)}
+            onClick={() => handleArtistClick(artist)}
           />
         ))}
       </ArtistGrid>
@@ -102,11 +115,33 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
+const Title = styled.h1`
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 40px;
+  text-align: center;
+`;
+
 const ArtistGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
+  gap: 40px;
+  align-items: start;
+`;
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 40px;
+  color: #ff4444;
+  font-size: 1.2rem;
 `;
 
 export default Artist;
