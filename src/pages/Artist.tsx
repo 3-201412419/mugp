@@ -42,7 +42,7 @@ function Artist() {
   useEffect(() => {
     // 유효하지 않은 카테고리인 경우 기본 페이지로 리다이렉트
     if (category && !isValidCategory(category)) {
-      navigate('/mugp/artist/influencer');
+      navigate('/artist/influencer');
       return;
     }
 
@@ -76,17 +76,25 @@ function Artist() {
   const handleArtistClick = (artist: Artist) => {
     console.log('Artist clicked:', artist);
     const encodedName = encodeURIComponent(artist.name);
-    const url = `/mugp/artist/${artist.category}/${encodedName}`;
+    const url = `/artist/${artist.category}/${encodedName}`;
     console.log('Navigating to:', url);
     navigate(url);
   };
 
   if (loading) {
-    return <Container><LoadingMessage>로딩 중...</LoadingMessage></Container>;
+    return (
+      <Container>
+        <LoadingMessage>로딩 중...</LoadingMessage>
+      </Container>
+    );
   }
 
   if (error) {
-    return <Container><ErrorMessage>{error}</ErrorMessage></Container>;
+    return (
+      <Container>
+        <ErrorMessage>{error}</ErrorMessage>
+      </Container>
+    );
   }
 
   return (
@@ -96,15 +104,19 @@ function Artist() {
         {category === 'mc' && 'MC'}
         {category === 'creator' && 'Creator'}
       </Title>
-      <ArtistGrid>
-        {artists.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            onClick={() => handleArtistClick(artist)}
-          />
-        ))}
-      </ArtistGrid>
+      {artists.length === 0 ? (
+        <NoDataMessage>현재 등록된 아티스트가 없습니다.</NoDataMessage>
+      ) : (
+        <ArtistGrid>
+          {artists.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              artist={artist}
+              onClick={() => handleArtistClick(artist)}
+            />
+          ))}
+        </ArtistGrid>
+      )}
     </Container>
   );
 }
@@ -127,12 +139,12 @@ const ArtistGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 40px;
-  align-items: start;
+  margin-top: 20px;
 `;
 
 const LoadingMessage = styled.div`
   text-align: center;
-  padding: 40px;
+  padding: 100px 0;
   font-size: 1.2rem;
   color: #666;
 `;
@@ -142,6 +154,14 @@ const ErrorMessage = styled.div`
   padding: 40px;
   color: #ff4444;
   font-size: 1.2rem;
+`;
+
+const NoDataMessage = styled.div`
+  text-align: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  color: #666;
+  width: 100%;
 `;
 
 export default Artist;
