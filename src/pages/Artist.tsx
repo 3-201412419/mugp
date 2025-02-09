@@ -49,8 +49,7 @@ function Artist() {
     const fetchArtists = async () => {
       try {
         setLoading(true);
-        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await axios.get<Artist[]>(`${baseURL}/api/artists${category ? `?category=${category}` : ''}`);
+        const response = await axios.get<Artist[]>(`/api/artists${category ? `?category=${category}` : ''}`);
         console.log('API Response:', response.data);
         const artistData = Array.isArray(response.data) ? response.data : [];
         const filteredAndSortedArtists = artistData
