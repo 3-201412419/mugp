@@ -15,20 +15,26 @@ const baseURL = import.meta.env.PROD
 
 export const getNotionEvents = async (): Promise<NotionEvent[]> => {
   try {
-    const response = await axios.get<NotionEvent[]>(`${baseURL}/api/calendar/events`, {
+    const response = await fetch(`${baseURL}/api/calendar/events`, {
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Calendar events response:', data);
     
-    console.log('Calendar events response:', response.data);
-    
-    if (!Array.isArray(response.data)) {
-      console.error('Unexpected response format:', response.data);
+    if (!Array.isArray(data)) {
+      console.error('Unexpected response format:', data);
       return [];
     }
     
-    return response.data.map(event => ({
+    return data.map(event => ({
       ...event,
       date: new Date(event.date).toISOString(),
       category: event.category || 'default'
