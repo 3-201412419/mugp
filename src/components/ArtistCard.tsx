@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -25,28 +25,61 @@ interface ArtistCardProps {
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({ artist, onClick }) => {
-  const images = [artist.image, ...(artist.images?.map(img => img.image) || [])];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [interval, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const allImages = [artist.image, ...(artist.images?.map(img => img.image) || [])];
+
+  const startImageRotation = () => {
+    const id = setInterval(() => {
+      setCurrentImageIndex(prev => 
+        prev === allImages.length - 1 ? 0 : prev + 1
+      );
+    }, 1000);
+    setIntervalId(id);
+  };
+
+  const stopImageRotation = () => {
+    if (interval) {
+      clearInterval(interval);
+      setIntervalId(null);
+      setCurrentImageIndex(0);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [interval]);
 
   return (
     <Container
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
+      onMouseEnter={() => {
+        if (allImages.length > 1) {
+          startImageRotation();
+        }
+      }}
+      onMouseLeave={() => {
+        if (allImages.length > 1) {
+          stopImageRotation();
+        }
+      }}
     >
       <ImageWrapper>
-        {images.map((image, index) => (
-          <StyledImage
-            key={index}
-            src={image}
-            alt={`${artist.name} ${index + 1}`}
-            $isFirst={index === 0}
-            $totalImages={images.length}
-          />
-        ))}
+        <StyledImage
+          src={allImages[currentImageIndex]}
+          alt={`${artist.name} ${currentImageIndex + 1}`}
+          $isFirst={true}
+          $totalImages={allImages.length}
+        />
       </ImageWrapper>
       <InfoContainer>
         <ArtistName>{artist.name}</ArtistName>
-        {/* <ArtistCategory>{artist.category}</ArtistCategory> */}
         {artist.description && (
           <ArtistDescription>{artist.description}</ArtistDescription>
         )}
@@ -55,84 +88,48 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist, onClick }) => {
   );
 };
 
+
 const Container = styled(motion.div)`
   width: 100%;
   border-radius: 15px;
   overflow: hidden;
+  cursor: pointer;
   background: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
   position: relative;
 `;
 
 const ImageWrapper = styled.div`
-  width: 100%;
-  padding-top: 133.33%; // 3:4 비율
   position: relative;
+  width: 100%;
+  padding-top: 100%; // 1:1 aspect ratio
   overflow: hidden;
-
-  &:hover img {
-    opacity: 0;
-  }
-
-  &:hover img:last-child {
-    opacity: 1;
-  }
 `;
 
-interface StyledImageProps {
-  $isFirst: boolean;
-  $totalImages: number;
-}
-
-const StyledImage = styled.img<StyledImageProps>`
+const StyledImage = styled.img<{ $isFirst: boolean; $totalImages: number }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.5s ease-in-out;
-  opacity: ${props => (props.$isFirst ? 1 : 0)};
-
-  ${props => {
-    if (props.$totalImages > 1) {
-      return `
-        &:hover {
-          opacity: 0;
-        }
-        &:hover + img {
-          opacity: 1;
-        }
-      `;
-    }
-    return '';
-  }}
+  transition: opacity 0.3s ease;
 `;
 
 const InfoContainer = styled.div`
-  padding: 20px;
+  padding: 1rem;
   background: white;
 `;
 
 const ArtistName = styled.h3`
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-`;
-
-const ArtistCategory = styled.p`
-  margin: 5px 0;
-  color: #666;
-  text-transform: capitalize;
+  font-size: 1.2rem;
+  font-weight: 500;
 `;
 
 const ArtistDescription = styled.p`
-  margin: 10px 0 0;
+  margin: 0.5rem 0 0;
   font-size: 0.9rem;
-  color: #444;
-  line-height: 1.4;
+  color: #666;
 `;
-
 export default ArtistCard;

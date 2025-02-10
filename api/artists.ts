@@ -50,7 +50,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     connection = await mysql.createConnection(dbConfig);
     console.log('Database connection successful');
 
-    let query = 'SELECT * FROM artists WHERE 1=1';
+    // 기본 쿼리 - artists와 artist_images 테이블 JOIN
+    let query = `
+      SELECT 
+        a.*,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'id', ai.id,
+            'image', ai.image,
+            'sort_order', ai.sort_order
+          )
+        ) as images
+      FROM artists a
+      LEFT JOIN artist_images ai ON a.id = ai.artistId
+      WHERE 1=1
+    `;
     let params: string[] = [];
 
     const category = req.query.category;
@@ -58,21 +72,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (category) {
       const categoryValue = Array.isArray(category) ? category[0] : category;
-      query += ' AND category = ?';
+      query += ' AND a.category = ?';
       params.push(categoryValue);
     }
 
     if (name) {
       const nameValue = Array.isArray(name) ? name[0] : name;
-      query += ' AND name = ?';
+      query += ' AND a.name = ?';
       params.push(decodeURIComponent(nameValue));
     }
 
+    query += ' GROUP BY a.id';
+
     console.log('Executing query:', query, 'with params:', params);
     const [rows] = await connection.execute(query, params);
-    console.log('Query results:', rows);
+    
+    // JSON 문자열을 파싱하여 실제 배열로 변환
+    const processedRows = Array.isArray(rows) ? rows.map(row => ({
+      ...row,
+      images: row.images ? JSON.parse(row.images.replace(/\\/g, '')) : []
+    })) : [];
 
-    return res.status(200).json(rows);
+    console.log('Query results:', processedRows);
+    return res.status(200).json(processedRows);
 
     return res.status(200).json(rows);
   } catch (error) {

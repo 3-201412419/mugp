@@ -61,7 +61,7 @@ const ArtistDetail: React.FC = () => {
 
   const handlePrevImage = () => {
     if (artist) {
-      const allImages = [artist.image, ...artist.images.map(img => img.image)];
+      const allImages = [artist.image, ...(artist.images?.map(img => img.image) || [])];
       setCurrentImageIndex((prev) => 
         prev === 0 ? allImages.length - 1 : prev - 1
       );
@@ -70,7 +70,7 @@ const ArtistDetail: React.FC = () => {
 
   const handleNextImage = () => {
     if (artist) {
-      const allImages = [artist.image, ...artist.images.map(img => img.image)];
+      const allImages = [artist.image, ...(artist.images?.map(img => img.image) || [])];
       setCurrentImageIndex((prev) => 
         prev === allImages.length - 1 ? 0 : prev + 1
       );
@@ -85,7 +85,7 @@ const ArtistDetail: React.FC = () => {
     return <Container><ErrorMessage>{error}</ErrorMessage></Container>;
   }
 
-  const allImages = [artist.image, ...artist.images.map(img => img.image)];
+  const allImages = [artist.image, ...(artist.images?.map(img => img.image) || [])];
 
   return (
     <Container>
