@@ -52,10 +52,10 @@ interface Artist {
   images: Array<{
     id: number;
     image: string;
-    order: number;
+    sort_order: number;
   }>;
   isActive: boolean;
-  order: number;
+  sort_order: number;
 }
 
 // 홈 컴포넌트 정의
