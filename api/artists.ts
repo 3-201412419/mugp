@@ -1,7 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import mysql from 'mysql2/promise';
 
-
 console.log('All environment variables:', {
   MYSQLHOST: process.env.MYSQLHOST,
   MYSQLPORT: process.env.MYSQLPORT,
@@ -87,10 +86,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('Executing query:', query, 'with params:', params);
     const [rows] = await connection.execute(query, params);
     
-    // JSON 문자열을 파싱하여 실제 배열로 변환
+    // JSON_ARRAYAGG가 이미 JSON 배열을 반환하므로 추가 파싱 불필요
     const processedRows = Array.isArray(rows) ? rows.map(row => ({
       ...row,
-      images: row.images ? JSON.parse(row.images.replace(/\\/g, '')) : []
+      images: row.images || []  // images가 null이면 빈 배열 사용
     })) : [];
 
     console.log('Query results:', processedRows);
