@@ -8,21 +8,13 @@ export interface NotionEvent {
   category: string;
 }
 
-// API URL을 환경 변수에서 가져오거나 기본값 사용
-const baseURL = import.meta.env.PROD 
-  ? 'https://mugp.vercel.app' 
-  : 'http://localhost:5000';
-
 export const getNotionEvents = async (): Promise<NotionEvent[]> => {
   try {
-    const response = await fetch(`${baseURL}/api/calendar/events`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
-
+    const response = await fetch('/api/calendar/events');
+    
     if (!response.ok) {
+      const text = await response.text();
+      console.error('API Response:', text);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

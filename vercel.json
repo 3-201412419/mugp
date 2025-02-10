@@ -8,25 +8,14 @@
       "runtime": "@vercel/node@3.0.0"
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/calendar/events",
-      "dest": "/api/calendar/events"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
