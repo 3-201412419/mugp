@@ -1,6 +1,16 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import mysql from 'mysql2/promise';
 
+
+console.log('All environment variables:', {
+  MYSQLHOST: process.env.MYSQLHOST,
+  MYSQLPORT: process.env.MYSQLPORT,
+  MYSQLUSER: process.env.MYSQLUSER,
+  MYSQLDATABASE: process.env.MYSQLDATABASE,
+  // 비밀번호는 보안을 위해 존재 여부만 로깅
+  MYSQLPASSWORD_EXISTS: !!process.env.MYSQLPASSWORD
+});
+
 const dbConfig = {
   host: process.env.MYSQLHOST,
   port: parseInt(process.env.MYSQLPORT || '3306'),
@@ -11,6 +21,15 @@ const dbConfig = {
     rejectUnauthorized: false
   }
 };
+
+console.log('Database configuration:', {
+  host: dbConfig.host,
+  port: dbConfig.port,
+  user: dbConfig.user,
+  database: dbConfig.database,
+  // 비밀번호는 보안을 위해 로깅하지 않음
+  ssl: dbConfig.ssl
+});
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 환경 변수 로깅
