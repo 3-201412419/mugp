@@ -46,34 +46,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   let connection;
   try {
-    // 1. 데이터베이스 연결 시도
     console.log('Attempting to connect to database...');
     connection = await mysql.createConnection(dbConfig);
     console.log('Database connection successful');
 
-    // 2. 테이블 존재 여부 확인
-    const [tables] = await connection.query('SHOW TABLES');
-    console.log('Available tables:', tables);
-
-    // 3. artists 테이블 구조 확인
-    const [columns] = await connection.query('SHOW COLUMNS FROM artists');
-    console.log('Artists table structure:', columns);
-
-    // 4. 간단한 쿼리 실행
-    const categoryParam = req.query.category;
-    let query = 'SELECT * FROM artists';
+    let query = 'SELECT * FROM artists WHERE 1=1';
     let params: string[] = [];
-    
-    if (categoryParam) {
-        // 배열인 경우 첫 번째 값만 사용
-        const category = Array.isArray(categoryParam) ? categoryParam[0] : categoryParam;
-        query += ' WHERE category = ?';
-        params.push(category);
+
+    const category = req.query.category;
+    const name = req.query.name;
+
+    if (category) {
+      const categoryValue = Array.isArray(category) ? category[0] : category;
+      query += ' AND category = ?';
+      params.push(categoryValue);
+    }
+
+    if (name) {
+      const nameValue = Array.isArray(name) ? name[0] : name;
+      query += ' AND name = ?';
+      params.push(decodeURIComponent(nameValue));
     }
 
     console.log('Executing query:', query, 'with params:', params);
     const [rows] = await connection.execute(query, params);
     console.log('Query results:', rows);
+
+    return res.status(200).json(rows);
 
     return res.status(200).json(rows);
   } catch (error) {

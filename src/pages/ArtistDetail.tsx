@@ -31,43 +31,33 @@ const ArtistDetail: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
         
-        // category와 name으로 필터링하여 정확한 아티스트를 가져옴
-        const response = await axios.get<Artist[]>(`${baseURL}/api/artists`, {
+        const response = await axios.get<Artist[]>(`/api/artists`, {
           params: {
-            category: category,
+            category,
             name: decodeURIComponent(name || '')
           }
         });
 
-        console.log('API Response:', response.data); // 디버깅용 로그
+        console.log('API Response:', response.data);
 
-        if (response.data && response.data.length > 0) {
-          const matchedArtist = response.data.find(
-            a => a.category === category && a.name === decodeURIComponent(name || '')
-          );
-          
-          if (matchedArtist) {
-            setArtist(matchedArtist);
-          } else {
-            setError('아티스트를 찾을 수 없습니다.');
-          }
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setArtist(response.data[0]); // 첫 번째 결과 사용
         } else {
-          setError('아티스트를 찾을 수 없습니다.');
+          setError('Artist not found');
         }
       } catch (err) {
         console.error('Error fetching artist:', err);
-        setError('아티스트 정보를 불러오는데 실패했습니다.');
+        setError('Error loading artist details');
       } finally {
         setLoading(false);
       }
     };
 
-    if (name && category) {
+    if (category && name) {
       fetchArtist();
     }
-  }, [name, category]);
+  }, [category, name]);
 
   const handlePrevImage = () => {
     if (artist) {
