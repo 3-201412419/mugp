@@ -2,64 +2,86 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import mysql from 'mysql2/promise';
 
 const dbConfig = {
-  host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT || '3306'),
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: process.env.MYSQLHOST,
+  port: parseInt(process.env.MYSQLPORT || '3306'),
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
   ssl: {
-    rejectUnauthorized: true
+    rejectUnauthorized: false
   }
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  console.log('API Route accessed:', req.method, req.url);
-  console.log('Environment variables:', {
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    user: process.env.MYSQL_USER,
-    database: process.env.MYSQL_DATABASE,
+  // 환경 변수 로깅
+  console.log('Database Config:', {
+    host: process.env.MYSQLHOST,
+    port: process.env.MYSQLPORT,
+    user: process.env.MYSQLUSER,
+    database: process.env.MYSQLDATABASE
   });
 
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  let connection;
   try {
-    console.log('Attempting to create database connection...');
-    const connection = await mysql.createConnection(dbConfig);
-    console.log('Database connection established successfully');
+    // 1. 데이터베이스 연결 시도
+    console.log('Attempting to connect to database...');
+    connection = await mysql.createConnection(dbConfig);
+    console.log('Database connection successful');
+
+    // 2. 테이블 존재 여부 확인
+    const [tables] = await connection.query('SHOW TABLES');
+    console.log('Available tables:', tables);
+
+    // 3. artists 테이블 구조 확인
+    const [columns] = await connection.query('SHOW COLUMNS FROM artists');
+    console.log('Artists table structure:', columns);
+
+    // 4. 간단한 쿼리 실행
+    const categoryParam = req.query.category;
+    let query = 'SELECT * FROM artists';
+    let params: string[] = [];
     
-    let query = 'SELECT * FROM artists WHERE isActive = true';
-    const category = req.query.category;
-    
-    if (category) {
-      query += ' AND category = ?';
-      console.log('Executing query:', query, 'with category:', category);
-      const [rows] = await connection.execute(query, [category]);
-      await connection.end();
-      console.log('Query results:', rows);
-      return res.status(200).json(rows);
+    if (categoryParam) {
+        // 배열인 경우 첫 번째 값만 사용
+        const category = Array.isArray(categoryParam) ? categoryParam[0] : categoryParam;
+        query += ' WHERE category = ?';
+        params.push(category);
     }
 
-    console.log('Executing query:', query);
-    const [rows] = await connection.execute(query);
-    await connection.end();
+    console.log('Executing query:', query, 'with params:', params);
+    const [rows] = await connection.execute(query, params);
     console.log('Query results:', rows);
+
     return res.status(200).json(rows);
-    
   } catch (error) {
-    console.error('Database error details:', {
+    console.error('Full error object:', error);
+    console.error('Error details:', {
       message: error.message,
       code: error.code,
       errno: error.errno,
       sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql
+    });
+
+    return res.status(500).json({
+      message: 'Database error',
+      error: error.message,
+      code: error.code,
       sqlMessage: error.sqlMessage
     });
-    return res.status(500).json({ 
-      message: 'Internal server error', 
-      error: error.message,
-      code: error.code
-    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+        console.log('Database connection closed');
+      } catch (err) {
+        console.error('Error closing connection:', err);
+      }
+    }
   }
 }
