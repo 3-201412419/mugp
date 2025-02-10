@@ -21,6 +21,11 @@ export const getNotionEvents = async (): Promise<NotionEvent[]> => {
     
     console.log('Calendar events response:', response.data);
     
+    if (!Array.isArray(response.data)) {
+      console.error('Unexpected response format:', response.data);
+      return [];
+    }
+    
     return response.data.map(event => ({
       ...event,
       date: new Date(event.date).toISOString(),
