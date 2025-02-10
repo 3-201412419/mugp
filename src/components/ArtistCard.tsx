@@ -25,7 +25,7 @@ interface ArtistCardProps {
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({ artist, onClick }) => {
-  const images = [artist.image, ...artist.images.map(img => img.image)];
+  const images = [artist.image, ...(artist.images?.map(img => img.image) || [])];
 
   return (
     <Container
